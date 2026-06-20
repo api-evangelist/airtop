@@ -1,0 +1,108 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Airtop
+providerId: airtop
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: true
+tags:
+- Browser Automation
+- AI Agents
+- Cloud Browser
+- Web Scraping
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Airtop spend. Airtop bills a monthly subscription per tier
+  that bundles a pool of credits and a simultaneous-session cap. Credits are
+  the unit of consumption: page loads, navigations, page interactions
+  (click / type / hover / scroll), scraping, screenshots, and AI page-query /
+  paginated-extraction operations each draw down credits, with more complex
+  work (such as captcha solving) costing more. Annual plans grant all credits
+  upfront with a 10% discount. Cost control centers on credit burn per
+  operation, session concurrency, and per-call cost/time thresholds.
+notes: >-
+  Credit-to-operation rates and tier credit pools are subject to change;
+  verify against the Airtop pricing page during reconciliation. Airtop does
+  not publish a FOCUS billing export; FOCUS columns below are a mapping for
+  internal cost normalization.
+sources:
+- https://www.airtop.ai/pricing
+- https://docs.airtop.ai
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Airtop
+serviceCategory: Web and Application Services
+billingModel:
+  pricingCategory: Subscription-Based
+  billingFrequency: Monthly
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: Airtop Cloud Browser
+  ServiceCategory: Web and Application Services
+  ProviderName: Airtop
+  PublisherName: Airtop
+  InvoiceIssuerName: Airtop
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Subscription-Based
+meters:
+- name: subscription_fee
+  description: Monthly (or annual) tier fee bundling a credit pool and concurrency cap.
+  unit: subscription
+  aggregation: sum
+  dimensions:
+  - account
+  - plan
+- name: credits_consumed
+  description: Credits drawn down by all browser operations across the account.
+  unit: credits
+  aggregation: sum
+  dimensions:
+  - account
+  - session
+  - operation
+- name: session_runtime
+  description: Cloud browser session activity contributing to credit consumption.
+  unit: sessions
+  aggregation: sum
+  dimensions:
+  - account
+  - session
+- name: ai_operation_credits
+  description: Credits consumed by AI page-query, paginated-extraction, and interaction resolution.
+  unit: credits
+  aggregation: sum
+  dimensions:
+  - account
+  - operation
+- name: captcha_solve_credits
+  description: Additional credits consumed when automatic captcha solving is used.
+  unit: credits
+  aggregation: sum
+  dimensions:
+  - account
+  - session
+principles:
+- name: Visibility
+  description: Track credit burn per session and per operation type; watch the monthly credit pool against tier allotment.
+- name: Allocation
+  description: Tag API keys or sessions per workload/team and map credit consumption to internal cost centers.
+- name: Optimization
+  description: Bound expensive AI calls with costThresholdCredits and timeThresholdSeconds; reuse profiles to avoid re-login work; avoid unnecessary captcha solving; right-size the tier to actual concurrency needs; prefer annual billing for the 10% discount.
+- name: Accountability
+  description: Assign owners per project/key; review credit spend monthly against the tier budget and upgrade or downgrade tiers as concurrency demand changes.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

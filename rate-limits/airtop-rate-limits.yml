@@ -1,0 +1,66 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Airtop
+providerId: airtop
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: false
+tags:
+- Browser Automation
+- AI Agents
+- Cloud Browser
+- Web Scraping
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  Airtop's primary constraint is plan-based concurrency - the maximum number
+  of simultaneous cloud browser sessions - rather than a published per-minute
+  request quota. Each plan caps concurrent sessions (Free 3, Starter 3,
+  Professional 30, Enterprise 100, Custom negotiated). Throughput is further
+  governed by a monthly credit balance consumed per browser operation, and
+  individual AI operations accept costThresholdCredits / timeThresholdSeconds
+  guards to bound a single call. Specific HTTP request-per-minute limits are
+  not published and are not reconciled in this artifact.
+notes: >-
+  Confirm any per-endpoint HTTP rate limits, concurrency burst behavior, and
+  throttling response codes against Airtop documentation and account settings
+  during reconciliation. Concurrency limits and credit pools are the
+  effective governors of throughput.
+sources:
+- https://www.airtop.ai/pricing
+- https://docs.airtop.ai
+responseCodes:
+  throttled: 429
+limits:
+- name: Simultaneous Sessions
+  scope: account
+  metric: concurrent_sessions
+  limit: plan-based (Free 3, Starter 3, Professional 30, Enterprise 100)
+  notes: Maximum cloud browser sessions running at once; raises with plan tier.
+- name: Monthly Credits
+  scope: account
+  metric: credits
+  limit: plan-based credit pool
+  notes: Credits consumed per page load, interaction, scrape, and AI query/extraction; complex actions (e.g. captcha) cost more.
+- name: Per-Operation Cost Threshold
+  scope: request
+  metric: credits
+  limit: caller-defined (costThresholdCredits)
+  notes: Optional per-call guard that cancels an AI operation if it would exceed the credit budget.
+- name: Per-Operation Time Threshold
+  scope: request
+  metric: seconds
+  limit: caller-defined (timeThresholdSeconds)
+  notes: Optional per-call guard that cancels an AI operation after the time limit.
+policies:
+- name: Concurrency-Based Limiting
+  description: Throughput is governed mainly by simultaneous-session caps per plan rather than a fixed RPM quota.
+- name: Credit Exhaustion
+  description: When the monthly credit pool is depleted, further operations are blocked until credits are replenished or the plan is upgraded.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

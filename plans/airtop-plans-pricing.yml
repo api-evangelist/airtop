@@ -1,0 +1,211 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Airtop
+providerId: airtop
+created: '2026-06-20'
+modified: '2026-06-20'
+reconciled: true
+tags:
+- Browser Automation
+- AI Agents
+- Cloud Browser
+- Web Scraping
+- Plans
+description: >-
+  Airtop sells access to its cloud-browser API through credit-based monthly
+  tiers plus a usage credit balance. Every tier includes a pool of credits and
+  a maximum number of simultaneous sessions; credits are consumed by browser
+  activity - page loads, interactions, scraping, and AI page-query / extraction
+  operations (more complex work such as captcha solving costs more credits).
+  A Free tier offers a starting credit pool, and Starter, Professional, and
+  Enterprise tiers raise credits and concurrency. Annual subscriptions add a
+  10% discount with all credits granted upfront. Larger needs are handled via
+  a Custom tier.
+notes: >-
+  Prices, credit allotments, and session limits are from the Airtop pricing
+  page and are subject to change; verify on the pricing page during
+  reconciliation. Credit-to-operation conversion varies by action complexity.
+sources:
+- https://www.airtop.ai/pricing
+- https://docs.airtop.ai
+plans:
+- id: airtop-free
+  name: Free
+  type: free
+  description: >-
+    Free starting tier with a base credit pool and limited concurrency for
+    evaluating the cloud-browser API.
+  entries:
+  - label: Included Credits
+    name: free_credits
+    type: feature
+    metric: credits
+    limit: 1000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0
+    userMultiplied: false
+  - label: Simultaneous Sessions
+    name: free_sessions
+    type: feature
+    metric: sessions
+    limit: 3
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: Sessions
+  - name: Windows
+  - name: Page Interaction
+  - name: AI Query and Extraction
+  - name: Screenshots
+  - name: Profiles
+- id: airtop-starter
+  name: Starter
+  type: subscription
+  description: >-
+    Entry paid tier adding an integrated proxy and support on top of a larger
+    monthly credit pool.
+  entries:
+  - label: Monthly Price
+    name: starter_price
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: from $26/month
+    userMultiplied: false
+  - label: Included Credits
+    name: starter_credits
+    type: feature
+    metric: credits
+    limit: 30000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included (30,000+ per month, varies by commitment)
+    userMultiplied: false
+  - label: Simultaneous Sessions
+    name: starter_sessions
+    type: feature
+    metric: sessions
+    limit: 3
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: Integrated Proxy
+  - name: Airtop Support
+- id: airtop-professional
+  name: Professional
+  type: subscription
+  description: >-
+    Higher-volume tier with custom proxy support and substantially more
+    credits and concurrency.
+  entries:
+  - label: Monthly Price
+    name: professional_price
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: from $170/month
+    userMultiplied: false
+  - label: Included Credits
+    name: professional_credits
+    type: feature
+    metric: credits
+    limit: 225000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included (225,000+ per month, varies by commitment)
+    userMultiplied: false
+  - label: Simultaneous Sessions
+    name: professional_sessions
+    type: feature
+    metric: sessions
+    limit: 30
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: Everything in Starter
+  - name: Custom Proxy
+  - name: Airtop Support
+- id: airtop-enterprise
+  name: Enterprise
+  type: subscription
+  description: >-
+    High-concurrency tier with the largest credit pools, dedicated support,
+    and a SOC 2 Type 2 report.
+  entries:
+  - label: Monthly Price
+    name: enterprise_price
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: from $502/month
+    userMultiplied: false
+  - label: Included Credits
+    name: enterprise_credits
+    type: feature
+    metric: credits
+    limit: 775000
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included (775,000+ per month, varies by commitment)
+    userMultiplied: false
+  - label: Simultaneous Sessions
+    name: enterprise_sessions
+    type: feature
+    metric: sessions
+    limit: 100
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: included
+    userMultiplied: false
+  elements:
+  - name: SOC 2 Type 2 Report
+  - name: Dedicated Support
+- id: airtop-custom
+  name: Custom
+  type: enterprise
+  description: >-
+    Custom tier with negotiated credit allocations, simultaneous session
+    limits, and volume pricing. Contact Airtop sales.
+  entries:
+  - label: Custom Agreement
+    name: custom
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Custom Credits
+  - name: Custom Simultaneous Sessions
+  - name: Volume Pricing
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

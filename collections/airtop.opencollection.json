@@ -1,0 +1,259 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Airtop API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{apiKey}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Sessions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "List sessions", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions"
+          },
+          "docs": "Returns the cloud browser sessions for the authenticated account."
+        },
+        {
+          "info": { "name": "Create session", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"configuration\": {\n    \"profileName\": \"my-profile\",\n    \"proxy\": true,\n    \"solveCaptcha\": true,\n    \"timeoutMinutes\": 10\n  }\n}"
+            }
+          },
+          "docs": "Starts a new cloud browser session and returns CDP and WebDriver connection URLs."
+        },
+        {
+          "info": { "name": "Get session info", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}"
+          },
+          "docs": "Returns details and status for a single session."
+        },
+        {
+          "info": { "name": "Terminate session", "type": "http" },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}"
+          },
+          "docs": "Ends a session and releases its cloud browser resources."
+        },
+        {
+          "info": { "name": "Save profile on termination", "type": "http" },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/profile",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"profileName\": \"my-profile\"\n}"
+            }
+          },
+          "docs": "Persists a named browser profile when the session terminates."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Windows",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "List windows", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows"
+          },
+          "docs": "Lists the windows currently open in a session."
+        },
+        {
+          "info": { "name": "Create window", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"url\": \"https://www.example.com\",\n  \"screenResolution\": \"1280x720\",\n  \"waitUntil\": \"load\"\n}"
+            }
+          },
+          "docs": "Opens a new browser window in a session and optionally navigates it to a URL."
+        },
+        {
+          "info": { "name": "Get window info", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}"
+          },
+          "docs": "Returns information about a window, including a live-view URL."
+        },
+        {
+          "info": { "name": "Close window", "type": "http" },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}"
+          },
+          "docs": "Closes a window within a session."
+        },
+        {
+          "info": { "name": "Load URL", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/load-url",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"url\": \"https://www.example.com/login\",\n  \"waitUntil\": \"load\"\n}"
+            }
+          },
+          "docs": "Navigates an existing window to a new URL."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Page Interaction",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Click", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/click",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"elementDescription\": \"the Sign in button\",\n  \"configuration\": { \"clickType\": \"click\" }\n}"
+            }
+          },
+          "docs": "Clicks an element identified by a natural-language description."
+        },
+        {
+          "info": { "name": "Hover", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/hover",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"elementDescription\": \"the Products menu item\"\n}"
+            }
+          },
+          "docs": "Hovers over an element described in natural language."
+        },
+        {
+          "info": { "name": "Type", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/type",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"text\": \"hello@example.com\",\n  \"elementDescription\": \"the email input field\",\n  \"clearInputField\": true,\n  \"pressEnterKey\": false\n}"
+            }
+          },
+          "docs": "Types text into a field described in natural language."
+        },
+        {
+          "info": { "name": "Scroll", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/scroll",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"scrollToElement\": \"the footer\"\n}"
+            }
+          },
+          "docs": "Scrolls the page, optionally toward a described element."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "AI Query",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Scrape content", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/scrape",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Scrapes the raw content of the page loaded in a window."
+        },
+        {
+          "info": { "name": "Query a page", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/page-query",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"prompt\": \"What is the price of the featured product?\",\n  \"configuration\": {\n    \"outputSchema\": { \"type\": \"object\", \"properties\": { \"price\": { \"type\": \"string\" } } }\n  }\n}"
+            }
+          },
+          "docs": "Asks a natural-language question about the current page and returns an AI model response."
+        },
+        {
+          "info": { "name": "Query a page with pagination", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/paginated-extraction",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"prompt\": \"Extract every product name and price across all pages.\",\n  \"configuration\": { \"paginationMode\": \"auto\" }\n}"
+            }
+          },
+          "docs": "Extracts structured data and follows pagination links across pages."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Screenshots",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Take screenshot", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/{{sessionId}}/windows/{{windowId}}/screenshot"
+          },
+          "docs": "Captures a screenshot of the current state of a window."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Profiles",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": { "name": "Delete profile", "type": "http" },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.airtop.ai/api/v1/profiles/{{profileId}}"
+          },
+          "docs": "Deletes a persisted browser profile."
+        }
+      ]
+    }
+  ]
+}

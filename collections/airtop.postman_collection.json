@@ -1,0 +1,371 @@
+{
+  "info": {
+    "name": "Airtop API",
+    "description": "Cloud-browser REST API for AI agents: sessions, windows, page interaction, AI query/extraction, screenshots, and profiles. Authenticated with a Bearer API key.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.airtop.ai/api/v1"
+    },
+    {
+      "key": "sessionId",
+      "value": ""
+    },
+    {
+      "key": "windowId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "List sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions"]
+            }
+          }
+        },
+        {
+          "name": "Create session",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"configuration\": {\n    \"profileName\": \"my-profile\",\n    \"proxy\": true,\n    \"solveCaptcha\": true,\n    \"timeoutMinutes\": 10\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions"]
+            }
+          }
+        },
+        {
+          "name": "Get session info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}"]
+            }
+          }
+        },
+        {
+          "name": "Terminate session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}"]
+            }
+          }
+        },
+        {
+          "name": "Save profile on termination",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"profileName\": \"my-profile\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Windows",
+      "item": [
+        {
+          "name": "List windows",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows"]
+            }
+          }
+        },
+        {
+          "name": "Create window",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://www.example.com\",\n  \"screenResolution\": \"1280x720\",\n  \"waitUntil\": \"load\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows"]
+            }
+          }
+        },
+        {
+          "name": "Get window info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}"]
+            }
+          }
+        },
+        {
+          "name": "Close window",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}"]
+            }
+          }
+        },
+        {
+          "name": "Load URL",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://www.example.com/login\",\n  \"waitUntil\": \"load\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/load-url",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "load-url"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Page Interaction",
+      "item": [
+        {
+          "name": "Click",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"elementDescription\": \"the Sign in button\",\n  \"configuration\": {\n    \"clickType\": \"click\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/click",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "click"]
+            }
+          }
+        },
+        {
+          "name": "Hover",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"elementDescription\": \"the Products menu item\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/hover",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "hover"]
+            }
+          }
+        },
+        {
+          "name": "Type",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"hello@example.com\",\n  \"elementDescription\": \"the email input field\",\n  \"clearInputField\": true,\n  \"pressEnterKey\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/type",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "type"]
+            }
+          }
+        },
+        {
+          "name": "Scroll",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scrollToElement\": \"the footer\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/scroll",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "scroll"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Query",
+      "item": [
+        {
+          "name": "Scrape content",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/scrape",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "scrape"]
+            }
+          }
+        },
+        {
+          "name": "Query a page",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"What is the price of the featured product?\",\n  \"configuration\": {\n    \"outputSchema\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"price\": { \"type\": \"string\" }\n      }\n    }\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/page-query",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "page-query"]
+            }
+          }
+        },
+        {
+          "name": "Query a page with pagination",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"Extract every product name and price across all pages.\",\n  \"configuration\": {\n    \"paginationMode\": \"auto\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/paginated-extraction",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "paginated-extraction"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Screenshots",
+      "item": [
+        {
+          "name": "Take screenshot",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/windows/{{windowId}}/screenshot",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "windows", "{{windowId}}", "screenshot"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profiles",
+      "item": [
+        {
+          "name": "Delete profile",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/:profileId",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", ":profileId"],
+              "variable": [
+                { "key": "profileId", "value": "" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

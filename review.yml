@@ -1,0 +1,91 @@
+aid: airtop
+name: Airtop
+review:
+  question: Does Airtop expose a documented public WebSocket or streaming API?
+  answer: false
+  date: '2026-06-20'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was created. Airtop's public product API is a
+    request/response REST API under https://api.airtop.ai/api/v1. No
+    documented Server-Sent Events (SSE) or WebSocket message API is exposed
+    by the Airtop API itself, so there is no event-driven surface to model
+    under the current API Evangelist AsyncAPI scope.
+findings:
+  summary: |
+    Airtop publishes a RESTful cloud-browser API at
+    https://api.airtop.ai/api/v1, authenticated with a Bearer API key, plus
+    TypeScript/Node and Python SDKs generated from a single core definition.
+    The API is organized around sessions, windows nested under sessions,
+    natural-language page interactions, AI page-query / extraction, screenshots,
+    and profiles. Long-running AI operations also have asynchronous variants
+    whose results are polled via GET /api/v1/requests/{id} - this is HTTP
+    polling, not a streaming or WebSocket transport. The one WebSocket-shaped
+    artifact Airtop returns is the Chrome DevTools Protocol (CDP) WebSocket URL
+    for a live browser session; that is a browser-control connection consumed
+    by automation libraries (Puppeteer/Playwright), not a documented Airtop
+    message/event API, so it is out of scope for AsyncAPI modeling.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.airtop.ai/api/v1
+      documented: true
+    - protocol: HTTP Polling
+      scheme: https
+      note: Async AI operations return a request id polled via GET /api/v1/requests/{id}. Not WebSocket or SSE.
+      documented: true
+    - protocol: CDP WebSocket
+      scheme: wss
+      documented: true
+      note: Airtop returns a Chrome DevTools Protocol WebSocket URL (cdpWsUrl) for live browser control by Puppeteer/Playwright. This is a browser-control transport, not an Airtop event/message API.
+    - protocol: WebSocket (API)
+      scheme: wss
+      documented: false
+      note: No Airtop application-level WebSocket or SSE message API is documented in the API reference as of the review date.
+  endpointsConfirmedRest:
+    - GET    https://api.airtop.ai/api/v1/sessions
+    - POST   https://api.airtop.ai/api/v1/sessions
+    - GET    https://api.airtop.ai/api/v1/sessions/{sessionId}
+    - DELETE https://api.airtop.ai/api/v1/sessions/{sessionId}
+    - PUT    https://api.airtop.ai/api/v1/sessions/{sessionId}/profile
+    - GET    https://api.airtop.ai/api/v1/sessions/{sessionId}/windows
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows
+    - GET    https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}
+    - DELETE https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/load-url
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/click
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/hover
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/type
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/scroll
+    - GET    https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/screenshot
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/scrape
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/page-query
+    - POST   https://api.airtop.ai/api/v1/sessions/{sessionId}/windows/{windowId}/paginated-extraction
+    - DELETE https://api.airtop.ai/api/v1/profiles/{profileId}
+    - GET    https://api.airtop.ai/api/v1/requests/{requestId}
+sources:
+  - url: https://docs.airtop.ai/api-reference/airtop-api
+    type: APIReference
+    note: Lists the REST endpoints under https://api.airtop.ai/api/v1; no WebSocket/SSE message API documented.
+  - url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+    type: APIReference
+    note: Create session returns CDP and WebDriver URLs for browser control; idle timeout and proxy/profile/captcha config.
+  - url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+    type: APIReference
+    note: page-query is a POST request/response returning data.modelResponse; supports outputSchema and pagination.
+  - url: https://www.airtop.ai/pricing
+    type: Pricing
+    note: Credit-based monthly tiers with simultaneous-session caps.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No application-level WebSocket or SSE message API surface exists for
+    Airtop. The only wss artifact is the CDP browser-control URL, which is a
+    browser automation transport, not an Airtop event API. No AsyncAPI
+    document was authored; the catalog models the documented REST surface via
+    openapi/airtop-openapi.yml.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
