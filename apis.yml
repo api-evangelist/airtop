@@ -140,6 +140,8 @@ apis:
     into named profiles that can be saved when a session terminates and loaded into
     future sessions, and deletes profiles when no longer needed.
 common:
+- type: AgenticAccess
+  url: agentic-access/airtop-agentic-access.yml
 - type: DomainSecurity
   url: security/airtop-domain-security.yml
 - type: Authentication
