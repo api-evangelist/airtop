@@ -9,6 +9,6 @@ schemes:
   type: http
   scheme: bearer
   description: 'Airtop API key supplied as a Bearer token in the Authorization header: `Authorization:
-    Bearer YOUR_API_KEY`.'
+    Bearer [example key]`.'
   sources:
   - openapi/airtop-openapi.yml
