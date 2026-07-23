@@ -1,0 +1,106 @@
+openapi: 3.0.1
+info:
+  title: Airtop AI Query Profiles API
+  description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
+  termsOfService: https://www.airtop.ai/legal/terms-of-service
+  contact:
+    name: Airtop Support
+    url: https://docs.airtop.ai
+  version: '1.0'
+servers:
+- url: https://api.airtop.ai/api/v1
+  description: Airtop production API
+security:
+- bearerAuth: []
+tags:
+- name: Profiles
+  description: Persist and delete browser profiles.
+paths:
+  /sessions/{sessionId}/profile:
+    put:
+      operationId: saveProfileOnTermination
+      tags:
+      - Profiles
+      summary: Save profile on termination
+      description: Marks a named profile to be persisted (cookies, local storage, authenticated state) when the session terminates, so it can be loaded into a future session.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profileName:
+                  type: string
+                  description: Name to save the persisted browser profile under.
+              required:
+              - profileName
+      responses:
+        '200':
+          description: Profile save scheduled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+  /profiles/{profileId}:
+    delete:
+      operationId: deleteProfile
+      tags:
+      - Profiles
+      summary: Delete profile
+      description: Deletes a persisted browser profile.
+      parameters:
+      - name: profileId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Profile deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+components:
+  schemas:
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Airtop API key supplied as a Bearer token in the Authorization header: `Authorization: Bearer YOUR_API_KEY`.'

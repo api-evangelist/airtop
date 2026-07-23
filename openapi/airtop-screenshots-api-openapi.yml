@@ -1,0 +1,91 @@
+openapi: 3.0.1
+info:
+  title: Airtop AI Query Screenshots API
+  description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
+  termsOfService: https://www.airtop.ai/legal/terms-of-service
+  contact:
+    name: Airtop Support
+    url: https://docs.airtop.ai
+  version: '1.0'
+servers:
+- url: https://api.airtop.ai/api/v1
+  description: Airtop production API
+security:
+- bearerAuth: []
+tags:
+- name: Screenshots
+  description: Capture window screenshots.
+paths:
+  /sessions/{sessionId}/windows/{windowId}/screenshot:
+    get:
+      operationId: takeScreenshot
+      tags:
+      - Screenshots
+      summary: Take screenshot
+      description: Captures a screenshot of the current state of a window.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      responses:
+        '200':
+          description: The screenshot.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenshotResponse'
+components:
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
+    ScreenshotResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              screenshots:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dataUrl:
+                      type: string
+                      description: Base64 data URL of the captured screenshot.
+  parameters:
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Airtop API key supplied as a Bearer token in the Authorization header: `Authorization: Bearer YOUR_API_KEY`.'

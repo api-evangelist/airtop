@@ -1,0 +1,249 @@
+openapi: 3.0.1
+info:
+  title: Airtop AI Query Page Interaction API
+  description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
+  termsOfService: https://www.airtop.ai/legal/terms-of-service
+  contact:
+    name: Airtop Support
+    url: https://docs.airtop.ai
+  version: '1.0'
+servers:
+- url: https://api.airtop.ai/api/v1
+  description: Airtop production API
+security:
+- bearerAuth: []
+tags:
+- name: Page Interaction
+  description: Drive a page with natural-language click, type, hover, and scroll.
+paths:
+  /sessions/{sessionId}/windows/{windowId}/click:
+    post:
+      operationId: click
+      tags:
+      - Page Interaction
+      summary: Click
+      description: Clicks an element identified by a natural-language description. AI resolves the description to an on-page target before clicking.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClickRequest'
+      responses:
+        '200':
+          description: Click performed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/hover:
+    post:
+      operationId: hover
+      tags:
+      - Page Interaction
+      summary: Hover
+      description: Hovers over an element described in natural language.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementInteractionRequest'
+      responses:
+        '200':
+          description: Hover performed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/type:
+    post:
+      operationId: type
+      tags:
+      - Page Interaction
+      summary: Type
+      description: Types text into a field described in natural language, with options to clear the field first and press Enter afterward.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypeRequest'
+      responses:
+        '200':
+          description: Text typed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/scroll:
+    post:
+      operationId: scroll
+      tags:
+      - Page Interaction
+      summary: Scroll
+      description: Scrolls the page, optionally toward a described element or by an offset.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScrollRequest'
+      responses:
+        '200':
+          description: Scroll performed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+components:
+  schemas:
+    AIResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              modelResponse:
+                type: string
+                description: The AI model's textual response to the prompt.
+          meta:
+            type: object
+            properties:
+              requestId:
+                type: string
+              status:
+                type: string
+              usage:
+                type: object
+                properties:
+                  credits:
+                    type: number
+              screenshots:
+                type: array
+                items:
+                  type: object
+    ElementInteractionRequest:
+      type: object
+      properties:
+        elementDescription:
+          type: string
+          description: Natural-language description of the target element.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+      required:
+      - elementDescription
+    TypeRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text to type.
+        elementDescription:
+          type: string
+          description: Natural-language description of the field to type into.
+        pressEnterKey:
+          type: boolean
+          description: Press Enter after typing.
+        clearInputField:
+          type: boolean
+          description: Clear the field before typing.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+      required:
+      - text
+    ScrollRequest:
+      type: object
+      properties:
+        scrollToElement:
+          type: string
+          description: Natural-language description of an element to scroll to.
+        scrollBy:
+          type: object
+          description: Pixel offset to scroll by.
+        configuration:
+          type: object
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
+    ClickRequest:
+      allOf:
+      - $ref: '#/components/schemas/ElementInteractionRequest'
+      - type: object
+        properties:
+          configuration:
+            type: object
+            properties:
+              clickType:
+                type: string
+                enum:
+                - click
+                - doubleClick
+                - rightClick
+              visualAnalysis:
+                type: object
+              waitForNavigationConfig:
+                type: object
+          waitForNavigation:
+            type: boolean
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Airtop API key supplied as a Bearer token in the Authorization header: `Authorization: Bearer YOUR_API_KEY`.'

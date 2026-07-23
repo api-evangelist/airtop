@@ -1,0 +1,229 @@
+openapi: 3.0.1
+info:
+  title: Airtop AI Query Windows API
+  description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
+  termsOfService: https://www.airtop.ai/legal/terms-of-service
+  contact:
+    name: Airtop Support
+    url: https://docs.airtop.ai
+  version: '1.0'
+servers:
+- url: https://api.airtop.ai/api/v1
+  description: Airtop production API
+security:
+- bearerAuth: []
+tags:
+- name: Windows
+  description: Create, navigate, and close browser windows inside a session.
+paths:
+  /sessions/{sessionId}/windows:
+    get:
+      operationId: listWindows
+      tags:
+      - Windows
+      summary: List windows
+      description: Lists the windows currently open in a session.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: A list of windows.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowsListResponse'
+    post:
+      operationId: createWindow
+      tags:
+      - Windows
+      summary: Create window
+      description: Opens a new browser window (tab) in a session and optionally navigates it to a URL.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWindowRequest'
+      responses:
+        '200':
+          description: The created window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowResponse'
+  /sessions/{sessionId}/windows/{windowId}:
+    get:
+      operationId: getWindowInfo
+      tags:
+      - Windows
+      summary: Get window info
+      description: Returns information about a window, including a live-view URL and current navigation state.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      responses:
+        '200':
+          description: The window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowResponse'
+    delete:
+      operationId: closeWindow
+      tags:
+      - Windows
+      summary: Close window
+      description: Closes a window within a session.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      responses:
+        '200':
+          description: Window closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+  /sessions/{sessionId}/windows/{windowId}/load-url:
+    post:
+      operationId: loadUrl
+      tags:
+      - Windows
+      summary: Load URL
+      description: Navigates an existing window to a new URL.
+      parameters:
+      - $ref: '#/components/parameters/SessionId'
+      - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: The URL to navigate to.
+                waitUntil:
+                  type: string
+                  enum:
+                  - load
+                  - domContentLoaded
+                  - complete
+                  - noWait
+                  description: Navigation event to wait for before returning.
+                waitUntilTimeoutSeconds:
+                  type: integer
+                  default: 30
+              required:
+              - url
+      responses:
+        '200':
+          description: Navigation complete.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowResponse'
+components:
+  schemas:
+    WindowResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Window'
+    Window:
+      type: object
+      properties:
+        windowId:
+          type: string
+        targetId:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        liveViewUrl:
+          type: string
+    CreateWindowRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Initial URL to load in the window.
+        screenResolution:
+          type: string
+          default: 1280x720
+          description: Window viewport resolution.
+        waitUntil:
+          type: string
+          enum:
+          - load
+          - domContentLoaded
+          - complete
+          - noWait
+        waitUntilTimeoutSeconds:
+          type: integer
+          default: 30
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
+    WindowsListResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              windows:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Window'
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Airtop API key supplied as a Bearer token in the Authorization header: `Authorization: Bearer YOUR_API_KEY`.'
