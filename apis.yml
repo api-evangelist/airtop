@@ -7,7 +7,20 @@ description: Airtop is a cloud-browser API for AI agents. It runs remote Chromiu
   windows, navigate pages, and interact with sites using natural-language
   instructions - clicking, typing, scraping, and querying pages with AI - without
   brittle selectors or self-hosted browser infrastructure.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/airtop.png
 tags:
 - Browser Automation
 - AI Agents
@@ -18,127 +31,186 @@ created: '2026-06-20'
 modified: '2026-06-20'
 specificationVersion: '0.19'
 apis:
-- aid: airtop:sessions
-  name: Airtop Sessions API
-  tags:
-  - Sessions
-  - Cloud Browser
-  - Lifecycle
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+- aid: airtop:airtop-ai-query-api
+  name: Airtop AI Query API
+  description: Query, extract, and scrape page content with AI.
   humanURL: https://docs.airtop.ai/api-reference/airtop-api
   baseURL: https://api.airtop.ai/api/v1
-  properties:
-  - url: https://docs.airtop.ai/guides/how-to/creating-a-session
-    type: Documentation
-  - url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
-    type: APIReference
-  - url: openapi/airtop-openapi.yml
-    type: OpenAPI
-  - url: collections/airtop.postman_collection.json
-    type: Postman
-  description: Creates and manages cloud browser sessions - remote Chromium
-    instances with optional profiles, proxies, recording, captcha solving, and
-    idle timeouts. Returns CDP and WebDriver connection URLs for the live session.
-- aid: airtop:windows
-  name: Airtop Windows API
-  tags:
-  - Windows
-  - Navigation
-  - Tabs
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.airtop.ai/api-reference/airtop-api/windows/create
-  baseURL: https://api.airtop.ai/api/v1
-  properties:
-  - url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
-    type: Documentation
-  - url: https://docs.airtop.ai/api-reference/airtop-api
-    type: APIReference
-  - url: openapi/airtop-openapi.yml
-    type: OpenAPI
-  - url: collections/airtop.postman_collection.json
-    type: Postman
-  description: Creates browser windows (tabs) inside a session, loads URLs, reads
-    window info, and closes windows. A window is the unit that pages load into and
-    that page-interaction and AI-query operations act on.
-- aid: airtop:page-interaction
-  name: Airtop Page Interaction API
-  tags:
-  - Page Interaction
-  - Click
-  - Type
-  - Scroll
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.airtop.ai/guides/how-to/ai/page-interactions
-  baseURL: https://api.airtop.ai/api/v1
-  properties:
-  - url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
-    type: Documentation
-  - url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
-    type: APIReference
-  - url: openapi/airtop-openapi.yml
-    type: OpenAPI
-  - url: collections/airtop.postman_collection.json
-    type: Postman
-  description: Drives a page using natural-language element descriptions instead of
-    selectors or XPaths - click, hover, type, and scroll. AI resolves the described
-    element to an on-page target before performing the action.
-- aid: airtop:ai-query
-  name: Airtop AI Query and Extraction API
   tags:
   - AI Query
-  - Extraction
-  - Scraping
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
-  baseURL: https://api.airtop.ai/api/v1
   properties:
-  - url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
-    type: Documentation
-  - url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
-    type: APIReference
-  - url: openapi/airtop-openapi.yml
-    type: OpenAPI
-  - url: collections/airtop.postman_collection.json
-    type: Postman
-  description: Asks natural-language questions about the current page (page-query),
-    extracts structured data against an optional JSON output schema, follows
-    pagination links for paginated extraction, and scrapes raw page content.
-- aid: airtop:screenshots
-  name: Airtop Screenshots API
-  tags:
-  - Screenshots
-  - Visual
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  - type: OpenAPI
+    url: openapi/airtop-ai-query-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-page-interaction-api
+  name: Airtop Page Interaction API
+  description: Drive a page with natural-language click, type, hover, and scroll.
   humanURL: https://docs.airtop.ai/api-reference/airtop-api
   baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Page Interaction
   properties:
-  - url: https://docs.airtop.ai/api-reference/airtop-api
-    type: Documentation
-  - url: openapi/airtop-openapi.yml
-    type: OpenAPI
-  - url: collections/airtop.postman_collection.json
-    type: Postman
-  description: Captures a screenshot of the current state of a window for visual
-    inspection, debugging, or feeding back into a vision-capable agent loop.
-- aid: airtop:profiles
+  - type: OpenAPI
+    url: openapi/airtop-page-interaction-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-profiles-api
   name: Airtop Profiles API
+  description: Persist and delete browser profiles.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
   tags:
   - Profiles
-  - Persistence
-  - Authentication
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-profiles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-screenshots-api
+  name: Airtop Screenshots API
+  description: Capture window screenshots.
   humanURL: https://docs.airtop.ai/api-reference/airtop-api
   baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Screenshots
   properties:
-  - url: https://docs.airtop.ai/api-reference/airtop-api
-    type: Documentation
-  - url: openapi/airtop-openapi.yml
-    type: OpenAPI
-  - url: collections/airtop.postman_collection.json
-    type: Postman
-  description: Persists browser state (cookies, local storage, logged-in sessions)
-    into named profiles that can be saved when a session terminates and loaded into
-    future sessions, and deletes profiles when no longer needed.
+  - type: OpenAPI
+    url: openapi/airtop-screenshots-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-sessions-api
+  name: Airtop Sessions API
+  description: Create and manage cloud browser sessions.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-sessions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-windows-api
+  name: Airtop Windows API
+  description: Create, navigate, and close browser windows inside a session.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Windows
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-windows-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
 common:
 - type: AgenticAccess
   url: agentic-access/airtop-agentic-access.yml
