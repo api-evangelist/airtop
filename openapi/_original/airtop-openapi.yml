@@ -1,0 +1,825 @@
+openapi: 3.0.1
+info:
+  title: Airtop API
+  description: >-
+    REST API for Airtop, a cloud-browser platform for AI agents. Create and
+    manage remote Chromium browser sessions, open and navigate windows, drive
+    pages with natural-language interactions (click, type, hover, scroll),
+    query and extract page content with AI, capture screenshots, and persist
+    state with profiles. All requests are authenticated with a Bearer API key.
+  termsOfService: https://www.airtop.ai/legal/terms-of-service
+  contact:
+    name: Airtop Support
+    url: https://docs.airtop.ai
+  version: '1.0'
+servers:
+  - url: https://api.airtop.ai/api/v1
+    description: Airtop production API
+security:
+  - bearerAuth: []
+tags:
+  - name: Sessions
+    description: Create and manage cloud browser sessions.
+  - name: Windows
+    description: Create, navigate, and close browser windows inside a session.
+  - name: Page Interaction
+    description: Drive a page with natural-language click, type, hover, and scroll.
+  - name: AI Query
+    description: Query, extract, and scrape page content with AI.
+  - name: Screenshots
+    description: Capture window screenshots.
+  - name: Profiles
+    description: Persist and delete browser profiles.
+paths:
+  /sessions:
+    get:
+      operationId: listSessions
+      tags:
+        - Sessions
+      summary: List sessions
+      description: Returns the cloud browser sessions for the authenticated account.
+      parameters:
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of sessions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionsListResponse'
+    post:
+      operationId: createSession
+      tags:
+        - Sessions
+      summary: Create session
+      description: >-
+        Starts a new cloud browser session (a remote Chromium instance) with
+        optional profile, proxy, recording, captcha solving, and idle timeout
+        configuration. Returns connection URLs (CDP and WebDriver) for the
+        live session.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionConfig'
+      responses:
+        '200':
+          description: The created session.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+  /sessions/{sessionId}:
+    get:
+      operationId: getSession
+      tags:
+        - Sessions
+      summary: Get session info
+      description: Returns details and status for a single session.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: The session.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+    delete:
+      operationId: terminateSession
+      tags:
+        - Sessions
+      summary: Terminate session
+      description: Ends a session and releases its cloud browser resources.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: Session terminated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+  /sessions/{sessionId}/profile:
+    put:
+      operationId: saveProfileOnTermination
+      tags:
+        - Profiles
+      summary: Save profile on termination
+      description: >-
+        Marks a named profile to be persisted (cookies, local storage,
+        authenticated state) when the session terminates, so it can be loaded
+        into a future session.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                profileName:
+                  type: string
+                  description: Name to save the persisted browser profile under.
+              required:
+                - profileName
+      responses:
+        '200':
+          description: Profile save scheduled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+  /sessions/{sessionId}/windows:
+    get:
+      operationId: listWindows
+      tags:
+        - Windows
+      summary: List windows
+      description: Lists the windows currently open in a session.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      responses:
+        '200':
+          description: A list of windows.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowsListResponse'
+    post:
+      operationId: createWindow
+      tags:
+        - Windows
+      summary: Create window
+      description: >-
+        Opens a new browser window (tab) in a session and optionally navigates
+        it to a URL.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWindowRequest'
+      responses:
+        '200':
+          description: The created window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowResponse'
+  /sessions/{sessionId}/windows/{windowId}:
+    get:
+      operationId: getWindowInfo
+      tags:
+        - Windows
+      summary: Get window info
+      description: >-
+        Returns information about a window, including a live-view URL and
+        current navigation state.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      responses:
+        '200':
+          description: The window.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowResponse'
+    delete:
+      operationId: closeWindow
+      tags:
+        - Windows
+      summary: Close window
+      description: Closes a window within a session.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      responses:
+        '200':
+          description: Window closed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+  /sessions/{sessionId}/windows/{windowId}/load-url:
+    post:
+      operationId: loadUrl
+      tags:
+        - Windows
+      summary: Load URL
+      description: Navigates an existing window to a new URL.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: The URL to navigate to.
+                waitUntil:
+                  type: string
+                  enum: [load, domContentLoaded, complete, noWait]
+                  description: Navigation event to wait for before returning.
+                waitUntilTimeoutSeconds:
+                  type: integer
+                  default: 30
+              required:
+                - url
+      responses:
+        '200':
+          description: Navigation complete.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WindowResponse'
+  /sessions/{sessionId}/windows/{windowId}/click:
+    post:
+      operationId: click
+      tags:
+        - Page Interaction
+      summary: Click
+      description: >-
+        Clicks an element identified by a natural-language description. AI
+        resolves the description to an on-page target before clicking.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClickRequest'
+      responses:
+        '200':
+          description: Click performed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/hover:
+    post:
+      operationId: hover
+      tags:
+        - Page Interaction
+      summary: Hover
+      description: Hovers over an element described in natural language.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementInteractionRequest'
+      responses:
+        '200':
+          description: Hover performed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/type:
+    post:
+      operationId: type
+      tags:
+        - Page Interaction
+      summary: Type
+      description: >-
+        Types text into a field described in natural language, with options to
+        clear the field first and press Enter afterward.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TypeRequest'
+      responses:
+        '200':
+          description: Text typed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/scroll:
+    post:
+      operationId: scroll
+      tags:
+        - Page Interaction
+      summary: Scroll
+      description: Scrolls the page, optionally toward a described element or by an offset.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScrollRequest'
+      responses:
+        '200':
+          description: Scroll performed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/screenshot:
+    get:
+      operationId: takeScreenshot
+      tags:
+        - Screenshots
+      summary: Take screenshot
+      description: Captures a screenshot of the current state of a window.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      responses:
+        '200':
+          description: The screenshot.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenshotResponse'
+  /sessions/{sessionId}/windows/{windowId}/scrape:
+    post:
+      operationId: scrapeContent
+      tags:
+        - AI Query
+      summary: Scrape content
+      description: Scrapes the raw content of the page loaded in a window.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScrapeRequest'
+      responses:
+        '200':
+          description: Scraped content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/page-query:
+    post:
+      operationId: pageQuery
+      tags:
+        - AI Query
+      summary: Query a page
+      description: >-
+        Asks a natural-language question about the current page and returns an
+        AI model response, optionally shaped by a JSON output schema.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageQueryRequest'
+      responses:
+        '200':
+          description: The AI model response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /sessions/{sessionId}/windows/{windowId}/paginated-extraction:
+    post:
+      operationId: paginatedExtraction
+      tags:
+        - AI Query
+      summary: Query a page with pagination
+      description: >-
+        Extracts structured data from a page and follows pagination links to
+        gather results across multiple pages.
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/WindowId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaginatedExtractionRequest'
+      responses:
+        '200':
+          description: The extracted data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIResponse'
+  /profiles/{profileId}:
+    delete:
+      operationId: deleteProfile
+      tags:
+        - Profiles
+      summary: Delete profile
+      description: Deletes a persisted browser profile.
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+  /requests/{requestId}:
+    get:
+      operationId: getRequestStatus
+      tags:
+        - Sessions
+      summary: Get request status
+      description: >-
+        Returns the status and result of an asynchronous request previously
+        issued against the API.
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        Airtop API key supplied as a Bearer token in the Authorization header:
+        `Authorization: Bearer YOUR_API_KEY`.
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
+    EnvelopeResponse:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              type: object
+    SessionConfig:
+      type: object
+      properties:
+        configuration:
+          type: object
+          properties:
+            profileName:
+              type: string
+              description: Name of a profile to load into the session.
+            extensionIds:
+              type: array
+              items:
+                type: string
+              description: Chrome Web Store extension IDs to load.
+            proxy:
+              description: Proxy configuration (boolean, object, or array).
+              oneOf:
+                - type: boolean
+                - type: object
+                - type: array
+                  items:
+                    type: object
+            record:
+              type: boolean
+              description: Enable session recording.
+            solveCaptcha:
+              type: boolean
+              description: Automatically solve captcha challenges.
+            timeoutMinutes:
+              type: integer
+              default: 10
+              description: Idle timeout in minutes before the session ends.
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        cdpWsUrl:
+          type: string
+          description: Chrome DevTools Protocol WebSocket URL for the session.
+        cdpUrl:
+          type: string
+        webDriverUrl:
+          type: string
+        profileName:
+          type: string
+    SessionResponse:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Session'
+    SessionsListResponse:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                sessions:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Session'
+    CreateWindowRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Initial URL to load in the window.
+        screenResolution:
+          type: string
+          default: 1280x720
+          description: Window viewport resolution.
+        waitUntil:
+          type: string
+          enum: [load, domContentLoaded, complete, noWait]
+        waitUntilTimeoutSeconds:
+          type: integer
+          default: 30
+    Window:
+      type: object
+      properties:
+        windowId:
+          type: string
+        targetId:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        liveViewUrl:
+          type: string
+    WindowResponse:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Window'
+    WindowsListResponse:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                windows:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Window'
+    ElementInteractionRequest:
+      type: object
+      properties:
+        elementDescription:
+          type: string
+          description: Natural-language description of the target element.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+      required:
+        - elementDescription
+    ClickRequest:
+      allOf:
+        - $ref: '#/components/schemas/ElementInteractionRequest'
+        - type: object
+          properties:
+            configuration:
+              type: object
+              properties:
+                clickType:
+                  type: string
+                  enum: [click, doubleClick, rightClick]
+                visualAnalysis:
+                  type: object
+                waitForNavigationConfig:
+                  type: object
+            waitForNavigation:
+              type: boolean
+    TypeRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text to type.
+        elementDescription:
+          type: string
+          description: Natural-language description of the field to type into.
+        pressEnterKey:
+          type: boolean
+          description: Press Enter after typing.
+        clearInputField:
+          type: boolean
+          description: Clear the field before typing.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+      required:
+        - text
+    ScrollRequest:
+      type: object
+      properties:
+        scrollToElement:
+          type: string
+          description: Natural-language description of an element to scroll to.
+        scrollBy:
+          type: object
+          description: Pixel offset to scroll by.
+        configuration:
+          type: object
+    PageQueryRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The question or instruction for analyzing page content.
+        clientRequestId:
+          type: string
+        followPaginationLinks:
+          type: boolean
+          default: false
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+          properties:
+            outputSchema:
+              type: object
+              description: JSON schema describing the desired structured output.
+            scrape:
+              type: object
+            visualAnalysis:
+              type: object
+            experimental:
+              type: object
+      required:
+        - prompt
+    PaginatedExtractionRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+          properties:
+            outputSchema:
+              type: object
+            paginationMode:
+              type: string
+              enum: [auto, paginated, infinite-scroll]
+      required:
+        - prompt
+    ScrapeRequest:
+      type: object
+      properties:
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+    AIResponse:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                modelResponse:
+                  type: string
+                  description: The AI model's textual response to the prompt.
+            meta:
+              type: object
+              properties:
+                requestId:
+                  type: string
+                status:
+                  type: string
+                usage:
+                  type: object
+                  properties:
+                    credits:
+                      type: number
+                screenshots:
+                  type: array
+                  items:
+                    type: object
+    ScreenshotResponse:
+      allOf:
+        - $ref: '#/components/schemas/Envelope'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                screenshots:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      dataUrl:
+                        type: string
+                        description: Base64 data URL of the captured screenshot.
