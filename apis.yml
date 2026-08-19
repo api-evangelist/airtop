@@ -29,7 +29,7 @@ tags:
 - Headless Chrome
 created: '2026-06-20'
 modified: '2026-06-20'
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 apis:
 - aid: airtop:airtop-ai-query-api
   name: Airtop AI Query API
