@@ -1,0 +1,65 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Airtop AI Query Profiles API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Profiles",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Save profile on termination",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/profile",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Marks a named profile to be persisted (cookies, local storage, authenticated state) when the session terminates, so it can be loaded into a future session."
+        },
+        {
+          "info": {
+            "name": "Delete profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.airtop.ai/api/v1/profiles/:profileId",
+            "params": [
+              {
+                "name": "profileId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Deletes a persisted browser profile."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

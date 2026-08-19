@@ -1,0 +1,49 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Airtop AI Query Screenshots API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Screenshots",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Take screenshot",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/screenshot",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ]
+          },
+          "docs": "Captures a screenshot of the current state of a window."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

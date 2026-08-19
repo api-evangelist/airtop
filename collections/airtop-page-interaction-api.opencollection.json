@@ -1,0 +1,140 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Airtop AI Query Page Interaction API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Page Interaction",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Click",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/click",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Clicks an element identified by a natural-language description. AI resolves the description to an on-page target before clicking."
+        },
+        {
+          "info": {
+            "name": "Hover",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/hover",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Hovers over an element described in natural language."
+        },
+        {
+          "info": {
+            "name": "Type",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/type",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Types text into a field described in natural language, with options to clear the field first and press Enter afterward."
+        },
+        {
+          "info": {
+            "name": "Scroll",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/scroll",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Scrolls the page, optionally toward a described element or by an offset."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,123 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Airtop AI Query Sessions API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Sessions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List sessions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions",
+            "params": [
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Returns the cloud browser sessions for the authenticated account."
+        },
+        {
+          "info": {
+            "name": "Create session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Starts a new cloud browser session (a remote Chromium instance) with optional profile, proxy, recording, captcha solving, and idle timeout configuration. Returns connection URLs (CDP and WebDriver) for the live session."
+        },
+        {
+          "info": {
+            "name": "Get session info",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              }
+            ]
+          },
+          "docs": "Returns details and status for a single session."
+        },
+        {
+          "info": {
+            "name": "Terminate session",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              }
+            ]
+          },
+          "docs": "Ends a session and releases its cloud browser resources."
+        },
+        {
+          "info": {
+            "name": "Get request status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/requests/:requestId",
+            "params": [
+              {
+                "name": "requestId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Returns the status and result of an asynchronous request previously issued against the API."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,452 @@
+{
+  "item": [
+    {
+      "id": "705e9588-0752-4e27-8693-4f6dbb77e708",
+      "name": "AI Query",
+      "description": {
+        "content": "Query, extract, and scrape page content with AI.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7c2f0e7a-5f46-42f0-a602-3334cdd6861e",
+          "name": "Scrape content",
+          "request": {
+            "name": "Scrape content",
+            "description": {
+              "content": "Scrapes the raw content of the page loaded in a window.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sessions",
+                ":sessionId",
+                "windows",
+                ":windowId",
+                "scrape"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "sessionId",
+                  "description": "(Required) Identifier of the cloud browser session."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "windowId",
+                  "description": "(Required) Identifier of the window within the session."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientRequestId\": \"<string>\",\n  \"costThresholdCredits\": \"<integer>\",\n  \"timeThresholdSeconds\": \"<integer>\",\n  \"configuration\": \"<object>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "4b97e88d-e293-465d-a54c-81660184f699",
+              "name": "Scraped content.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sessions",
+                    ":sessionId",
+                    "windows",
+                    ":windowId",
+                    "scrape"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "sessionId",
+                      "description": "(Required) Identifier of the cloud browser session."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "windowId",
+                      "description": "(Required) Identifier of the window within the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"clientRequestId\": \"<string>\",\n  \"costThresholdCredits\": \"<integer>\",\n  \"timeThresholdSeconds\": \"<integer>\",\n  \"configuration\": \"<object>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"requestId\": \"string\",\n    \"status\": \"string\",\n    \"usage\": {\n      \"credits\": 8851.470840807662\n    }\n  },\n  \"data\": {\n    \"modelResponse\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "67b1b95b-6e26-4a77-b441-3682b3283b38",
+          "name": "Query a page",
+          "request": {
+            "name": "Query a page",
+            "description": {
+              "content": "Asks a natural-language question about the current page and returns an AI model response, optionally shaped by a JSON output schema.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sessions",
+                ":sessionId",
+                "windows",
+                ":windowId",
+                "page-query"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "sessionId",
+                  "description": "(Required) Identifier of the cloud browser session."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "windowId",
+                  "description": "(Required) Identifier of the window within the session."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"<string>\",\n  \"clientRequestId\": \"<string>\",\n  \"followPaginationLinks\": false,\n  \"costThresholdCredits\": \"<integer>\",\n  \"timeThresholdSeconds\": \"<integer>\",\n  \"configuration\": {\n    \"outputSchema\": \"<object>\",\n    \"scrape\": \"<object>\",\n    \"visualAnalysis\": \"<object>\",\n    \"experimental\": \"<object>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "f0b35657-9054-48f3-b11d-fc7d3ea41d64",
+              "name": "The AI model response.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sessions",
+                    ":sessionId",
+                    "windows",
+                    ":windowId",
+                    "page-query"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "sessionId",
+                      "description": "(Required) Identifier of the cloud browser session."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "windowId",
+                      "description": "(Required) Identifier of the window within the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"prompt\": \"<string>\",\n  \"clientRequestId\": \"<string>\",\n  \"followPaginationLinks\": false,\n  \"costThresholdCredits\": \"<integer>\",\n  \"timeThresholdSeconds\": \"<integer>\",\n  \"configuration\": {\n    \"outputSchema\": \"<object>\",\n    \"scrape\": \"<object>\",\n    \"visualAnalysis\": \"<object>\",\n    \"experimental\": \"<object>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"requestId\": \"string\",\n    \"status\": \"string\",\n    \"usage\": {\n      \"credits\": 9767.305628597502\n    }\n  },\n  \"data\": {\n    \"modelResponse\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "23137c6f-b4f6-4192-81e3-61edc9e620b9",
+          "name": "Query a page with pagination",
+          "request": {
+            "name": "Query a page with pagination",
+            "description": {
+              "content": "Extracts structured data from a page and follows pagination links to gather results across multiple pages.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sessions",
+                ":sessionId",
+                "windows",
+                ":windowId",
+                "paginated-extraction"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "sessionId",
+                  "description": "(Required) Identifier of the cloud browser session."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "windowId",
+                  "description": "(Required) Identifier of the window within the session."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prompt\": \"<string>\",\n  \"clientRequestId\": \"<string>\",\n  \"costThresholdCredits\": \"<integer>\",\n  \"timeThresholdSeconds\": \"<integer>\",\n  \"configuration\": {\n    \"outputSchema\": \"<object>\",\n    \"paginationMode\": \"<string>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "e05c422a-bd78-4148-8057-6c9afbff1bed",
+              "name": "The extracted data.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sessions",
+                    ":sessionId",
+                    "windows",
+                    ":windowId",
+                    "paginated-extraction"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "sessionId",
+                      "description": "(Required) Identifier of the cloud browser session."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "windowId",
+                      "description": "(Required) Identifier of the window within the session."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"prompt\": \"<string>\",\n  \"clientRequestId\": \"<string>\",\n  \"costThresholdCredits\": \"<integer>\",\n  \"timeThresholdSeconds\": \"<integer>\",\n  \"configuration\": {\n    \"outputSchema\": \"<object>\",\n    \"paginationMode\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"meta\": {\n    \"requestId\": \"string\",\n    \"status\": \"string\",\n    \"usage\": {\n      \"credits\": 9767.305628597502\n    }\n  },\n  \"data\": {\n    \"modelResponse\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.airtop.ai/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "df466b7d-9587-4ad9-a71f-cb0f519a7dd9",
+    "name": "Airtop AI Query API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.\n\nContact Support:\n Name: Airtop Support",
+      "type": "text/plain"
+    }
+  }
+}

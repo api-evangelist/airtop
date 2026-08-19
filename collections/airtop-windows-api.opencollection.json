@@ -1,0 +1,145 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Airtop AI Query Windows API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Windows",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List windows",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              }
+            ]
+          },
+          "docs": "Lists the windows currently open in a session."
+        },
+        {
+          "info": {
+            "name": "Create window",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Opens a new browser window (tab) in a session and optionally navigates it to a URL."
+        },
+        {
+          "info": {
+            "name": "Get window info",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ]
+          },
+          "docs": "Returns information about a window, including a live-view URL and current navigation state."
+        },
+        {
+          "info": {
+            "name": "Close window",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ]
+          },
+          "docs": "Closes a window within a session."
+        },
+        {
+          "info": {
+            "name": "Load URL",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/load-url",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Navigates an existing window to a new URL."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

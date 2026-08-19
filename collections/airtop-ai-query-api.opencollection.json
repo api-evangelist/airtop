@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Airtop AI Query API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "AI Query",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Scrape content",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/scrape",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Scrapes the raw content of the page loaded in a window."
+        },
+        {
+          "info": {
+            "name": "Query a page",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/page-query",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Asks a natural-language question about the current page and returns an AI model response, optionally shaped by a JSON output schema."
+        },
+        {
+          "info": {
+            "name": "Query a page with pagination",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.airtop.ai/api/v1/sessions/:sessionId/windows/:windowId/paginated-extraction",
+            "params": [
+              {
+                "name": "sessionId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the cloud browser session."
+              },
+              {
+                "name": "windowId",
+                "value": "",
+                "type": "path",
+                "description": "Identifier of the window within the session."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Extracts structured data from a page and follows pagination links to gather results across multiple pages."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
