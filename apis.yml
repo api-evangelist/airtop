@@ -7,6 +7,18 @@ description: Airtop is a cloud-browser API for AI agents. It runs remote Chromiu
   windows, navigate pages, and interact with sites using natural-language
   instructions - clicking, typing, scraping, and querying pages with AI - without
   brittle selectors or self-hosted browser infrastructure.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
