@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Airtop AI Query Profiles API
+  title: Airtop Profiles API
   description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
   termsOfService: https://www.airtop.ai/legal/terms-of-service
   contact:

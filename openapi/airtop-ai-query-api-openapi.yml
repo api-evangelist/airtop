@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   title: Airtop AI Query API
   description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
@@ -87,44 +87,6 @@ paths:
                 $ref: '#/components/schemas/AIResponse'
 components:
   schemas:
-    ScrapeRequest:
-      type: object
-      properties:
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
-    AIResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              modelResponse:
-                type: string
-                description: The AI model's textual response to the prompt.
-          meta:
-            type: object
-            properties:
-              requestId:
-                type: string
-              status:
-                type: string
-              usage:
-                type: object
-                properties:
-                  credits:
-                    type: number
-              screenshots:
-                type: array
-                items:
-                  type: object
     PageQueryRequest:
       type: object
       properties:
@@ -154,6 +116,35 @@ components:
               type: object
       required:
       - prompt
+    ScrapeRequest:
+      type: object
+      properties:
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
     PaginatedExtractionRequest:
       type: object
       properties:
@@ -178,37 +169,46 @@ components:
               - infinite-scroll
       required:
       - prompt
-    Envelope:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
-        errors:
-          type: array
-          items:
+    AIResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
             type: object
-        warnings:
-          type: array
-          items:
+            properties:
+              modelResponse:
+                type: string
+                description: The AI model's textual response to the prompt.
+          meta:
             type: object
+            properties:
+              requestId:
+                type: string
+              status:
+                type: string
+              usage:
+                type: object
+                properties:
+                  credits:
+                    type: number
+              screenshots:
+                type: array
+                items:
+                  type: object
   parameters:
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
     WindowId:
       name: windowId
       in: path
       required: true
       description: Identifier of the window within the session.
+      schema:
+        type: string
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
       schema:
         type: string
   securitySchemes:

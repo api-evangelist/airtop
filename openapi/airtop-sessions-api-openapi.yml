@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: Airtop AI Query Sessions API
+  title: Airtop Sessions API
   description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
   termsOfService: https://www.airtop.ai/legal/terms-of-service
   contact:
@@ -117,15 +117,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnvelopeResponse'
 components:
-  parameters:
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
   schemas:
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
     SessionResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
@@ -133,6 +132,22 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/Session'
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        cdpWsUrl:
+          type: string
+          description: Chrome DevTools Protocol WebSocket URL for the session.
+        cdpUrl:
+          type: string
+        webDriverUrl:
+          type: string
+        profileName:
+          type: string
     SessionConfig:
       type: object
       properties:
@@ -165,29 +180,6 @@ components:
               type: integer
               default: 10
               description: Idle timeout in minutes before the session ends.
-    Session:
-      type: object
-      properties:
-        id:
-          type: string
-        status:
-          type: string
-        cdpWsUrl:
-          type: string
-          description: Chrome DevTools Protocol WebSocket URL for the session.
-        cdpUrl:
-          type: string
-        webDriverUrl:
-          type: string
-        profileName:
-          type: string
-    EnvelopeResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
     Envelope:
       type: object
       properties:
@@ -218,6 +210,14 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Session'
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http
