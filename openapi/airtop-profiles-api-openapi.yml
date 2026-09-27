@@ -65,6 +65,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/EnvelopeResponse'
 components:
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
   schemas:
     EnvelopeResponse:
       allOf:
@@ -91,14 +99,6 @@ components:
           type: array
           items:
             type: object
-  parameters:
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
   securitySchemes:
     bearerAuth:
       type: http

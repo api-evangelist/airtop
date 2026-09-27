@@ -118,20 +118,6 @@ paths:
                 $ref: '#/components/schemas/EnvelopeResponse'
 components:
   schemas:
-    EnvelopeResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-    SessionResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Session'
     Session:
       type: object
       properties:
@@ -148,6 +134,43 @@ components:
           type: string
         profileName:
           type: string
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+    SessionsListResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              sessions:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
     SessionConfig:
       type: object
       properties:
@@ -180,36 +203,13 @@ components:
               type: integer
               default: 10
               description: Idle timeout in minutes before the session ends.
-    Envelope:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
-        errors:
-          type: array
-          items:
-            type: object
-        warnings:
-          type: array
-          items:
-            type: object
-    SessionsListResponse:
+    SessionResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
       - type: object
         properties:
           data:
-            type: object
-            properties:
-              sessions:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Session'
+            $ref: '#/components/schemas/Session'
   parameters:
     SessionId:
       name: sessionId

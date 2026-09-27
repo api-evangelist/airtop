@@ -125,62 +125,33 @@ components:
       schema:
         type: string
   schemas:
-    ClickRequest:
+    AIResponse:
       allOf:
-      - $ref: '#/components/schemas/ElementInteractionRequest'
+      - $ref: '#/components/schemas/Envelope'
       - type: object
         properties:
-          configuration:
+          data:
             type: object
             properties:
-              clickType:
+              modelResponse:
                 type: string
-                enum:
-                - click
-                - doubleClick
-                - rightClick
-              visualAnalysis:
+                description: The AI model's textual response to the prompt.
+          meta:
+            type: object
+            properties:
+              requestId:
+                type: string
+              status:
+                type: string
+              usage:
                 type: object
-              waitForNavigationConfig:
-                type: object
-          waitForNavigation:
-            type: boolean
-    ScrollRequest:
-      type: object
-      properties:
-        scrollToElement:
-          type: string
-          description: Natural-language description of an element to scroll to.
-        scrollBy:
-          type: object
-          description: Pixel offset to scroll by.
-        configuration:
-          type: object
-    TypeRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: The text to type.
-        elementDescription:
-          type: string
-          description: Natural-language description of the field to type into.
-        pressEnterKey:
-          type: boolean
-          description: Press Enter after typing.
-        clearInputField:
-          type: boolean
-          description: Clear the field before typing.
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
-      required:
-      - text
+                properties:
+                  credits:
+                    type: number
+              screenshots:
+                type: array
+                items:
+                  type: object
     Envelope:
       type: object
       properties:
@@ -215,33 +186,62 @@ components:
           type: object
       required:
       - elementDescription
-    AIResponse:
+    ScrollRequest:
+      type: object
+      properties:
+        scrollToElement:
+          type: string
+          description: Natural-language description of an element to scroll to.
+        scrollBy:
+          type: object
+          description: Pixel offset to scroll by.
+        configuration:
+          type: object
+    ClickRequest:
       allOf:
-      - $ref: '#/components/schemas/Envelope'
+      - $ref: '#/components/schemas/ElementInteractionRequest'
       - type: object
         properties:
-          data:
+          configuration:
             type: object
             properties:
-              modelResponse:
+              clickType:
                 type: string
-                description: The AI model's textual response to the prompt.
-          meta:
-            type: object
-            properties:
-              requestId:
-                type: string
-              status:
-                type: string
-              usage:
+                enum:
+                - click
+                - doubleClick
+                - rightClick
+              visualAnalysis:
                 type: object
-                properties:
-                  credits:
-                    type: number
-              screenshots:
-                type: array
-                items:
-                  type: object
+              waitForNavigationConfig:
+                type: object
+          waitForNavigation:
+            type: boolean
+    TypeRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text to type.
+        elementDescription:
+          type: string
+          description: Natural-language description of the field to type into.
+        pressEnterKey:
+          type: boolean
+          description: Press Enter after typing.
+        clearInputField:
+          type: boolean
+          description: Clear the field before typing.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+      required:
+      - text
   securitySchemes:
     bearerAuth:
       type: http
