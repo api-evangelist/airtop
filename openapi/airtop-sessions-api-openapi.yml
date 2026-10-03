@@ -118,22 +118,6 @@ paths:
                 $ref: '#/components/schemas/EnvelopeResponse'
 components:
   schemas:
-    Session:
-      type: object
-      properties:
-        id:
-          type: string
-        status:
-          type: string
-        cdpWsUrl:
-          type: string
-          description: Chrome DevTools Protocol WebSocket URL for the session.
-        cdpUrl:
-          type: string
-        webDriverUrl:
-          type: string
-        profileName:
-          type: string
     Envelope:
       type: object
       properties:
@@ -152,13 +136,22 @@ components:
           type: array
           items:
             type: object
-    EnvelopeResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        cdpWsUrl:
+          type: string
+          description: Chrome DevTools Protocol WebSocket URL for the session.
+        cdpUrl:
+          type: string
+        webDriverUrl:
+          type: string
+        profileName:
+          type: string
     SessionsListResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
@@ -210,6 +203,13 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/Session'
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
   parameters:
     SessionId:
       name: sessionId

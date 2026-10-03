@@ -162,6 +162,38 @@ components:
           type: array
           items:
             type: object
+    WindowResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Window'
+    Window:
+      type: object
+      properties:
+        windowId:
+          type: string
+        targetId:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        liveViewUrl:
+          type: string
+    WindowsListResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              windows:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Window'
     CreateWindowRequest:
       type: object
       properties:
@@ -183,26 +215,6 @@ components:
         waitUntilTimeoutSeconds:
           type: integer
           default: 30
-    WindowResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Window'
-    Window:
-      type: object
-      properties:
-        windowId:
-          type: string
-        targetId:
-          type: string
-        url:
-          type: string
-        title:
-          type: string
-        liveViewUrl:
-          type: string
     EnvelopeResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
@@ -210,18 +222,6 @@ components:
         properties:
           data:
             type: object
-    WindowsListResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              windows:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Window'
   securitySchemes:
     bearerAuth:
       type: http

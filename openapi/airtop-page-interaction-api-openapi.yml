@@ -125,33 +125,6 @@ components:
       schema:
         type: string
   schemas:
-    AIResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              modelResponse:
-                type: string
-                description: The AI model's textual response to the prompt.
-          meta:
-            type: object
-            properties:
-              requestId:
-                type: string
-              status:
-                type: string
-              usage:
-                type: object
-                properties:
-                  credits:
-                    type: number
-              screenshots:
-                type: array
-                items:
-                  type: object
     Envelope:
       type: object
       properties:
@@ -170,6 +143,31 @@ components:
           type: array
           items:
             type: object
+    TypeRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text to type.
+        elementDescription:
+          type: string
+          description: Natural-language description of the field to type into.
+        pressEnterKey:
+          type: boolean
+          description: Press Enter after typing.
+        clearInputField:
+          type: boolean
+          description: Clear the field before typing.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+      required:
+      - text
     ElementInteractionRequest:
       type: object
       properties:
@@ -197,6 +195,33 @@ components:
           description: Pixel offset to scroll by.
         configuration:
           type: object
+    AIResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              modelResponse:
+                type: string
+                description: The AI model's textual response to the prompt.
+          meta:
+            type: object
+            properties:
+              requestId:
+                type: string
+              status:
+                type: string
+              usage:
+                type: object
+                properties:
+                  credits:
+                    type: number
+              screenshots:
+                type: array
+                items:
+                  type: object
     ClickRequest:
       allOf:
       - $ref: '#/components/schemas/ElementInteractionRequest'
@@ -217,31 +242,6 @@ components:
                 type: object
           waitForNavigation:
             type: boolean
-    TypeRequest:
-      type: object
-      properties:
-        text:
-          type: string
-          description: The text to type.
-        elementDescription:
-          type: string
-          description: Natural-language description of the field to type into.
-        pressEnterKey:
-          type: boolean
-          description: Press Enter after typing.
-        clearInputField:
-          type: boolean
-          description: Clear the field before typing.
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
-      required:
-      - text
   securitySchemes:
     bearerAuth:
       type: http

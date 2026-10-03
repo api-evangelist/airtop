@@ -34,22 +34,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/ScreenshotResponse'
 components:
-  parameters:
-    WindowId:
-      name: windowId
-      in: path
-      required: true
-      description: Identifier of the window within the session.
-      schema:
-        type: string
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
   schemas:
+    ScreenshotResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              screenshots:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dataUrl:
+                      type: string
+                      description: Base64 data URL of the captured screenshot.
     Envelope:
       type: object
       properties:
@@ -68,22 +69,21 @@ components:
           type: array
           items:
             type: object
-    ScreenshotResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              screenshots:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    dataUrl:
-                      type: string
-                      description: Base64 data URL of the captured screenshot.
+  parameters:
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

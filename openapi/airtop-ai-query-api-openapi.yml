@@ -86,22 +86,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/AIResponse'
 components:
-  parameters:
-    WindowId:
-      name: windowId
-      in: path
-      required: true
-      description: Identifier of the window within the session.
-      schema:
-        type: string
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
   schemas:
+    PaginatedExtractionRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+          properties:
+            outputSchema:
+              type: object
+            paginationMode:
+              type: string
+              enum:
+              - auto
+              - paginated
+              - infinite-scroll
+      required:
+      - prompt
+    ScrapeRequest:
+      type: object
+      properties:
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
     PageQueryRequest:
       type: object
       properties:
@@ -158,59 +196,21 @@ components:
                 type: array
                 items:
                   type: object
-    Envelope:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
-        errors:
-          type: array
-          items:
-            type: object
-        warnings:
-          type: array
-          items:
-            type: object
-    ScrapeRequest:
-      type: object
-      properties:
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
-    PaginatedExtractionRequest:
-      type: object
-      properties:
-        prompt:
-          type: string
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
-          properties:
-            outputSchema:
-              type: object
-            paginationMode:
-              type: string
-              enum:
-              - auto
-              - paginated
-              - infinite-scroll
-      required:
-      - prompt
+  parameters:
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http
