@@ -128,22 +128,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/WindowResponse'
 components:
-  parameters:
-    WindowId:
-      name: windowId
-      in: path
-      required: true
-      description: Identifier of the window within the session.
-      schema:
-        type: string
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
   schemas:
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
     Envelope:
       type: object
       properties:
@@ -162,38 +154,6 @@ components:
           type: array
           items:
             type: object
-    WindowResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Window'
-    Window:
-      type: object
-      properties:
-        windowId:
-          type: string
-        targetId:
-          type: string
-        url:
-          type: string
-        title:
-          type: string
-        liveViewUrl:
-          type: string
-    WindowsListResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              windows:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Window'
     CreateWindowRequest:
       type: object
       properties:
@@ -215,13 +175,53 @@ components:
         waitUntilTimeoutSeconds:
           type: integer
           default: 30
-    EnvelopeResponse:
+    Window:
+      type: object
+      properties:
+        windowId:
+          type: string
+        targetId:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        liveViewUrl:
+          type: string
+    WindowResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Window'
+    WindowsListResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
       - type: object
         properties:
           data:
             type: object
+            properties:
+              windows:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Window'
+  parameters:
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

@@ -111,17 +111,6 @@ components:
               - infinite-scroll
       required:
       - prompt
-    ScrapeRequest:
-      type: object
-      properties:
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
     Envelope:
       type: object
       properties:
@@ -140,6 +129,44 @@ components:
           type: array
           items:
             type: object
+    ScrapeRequest:
+      type: object
+      properties:
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+    AIResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: object
+            properties:
+              modelResponse:
+                type: string
+                description: The AI model's textual response to the prompt.
+          meta:
+            type: object
+            properties:
+              requestId:
+                type: string
+              status:
+                type: string
+              usage:
+                type: object
+                properties:
+                  credits:
+                    type: number
+              screenshots:
+                type: array
+                items:
+                  type: object
     PageQueryRequest:
       type: object
       properties:
@@ -169,46 +196,19 @@ components:
               type: object
       required:
       - prompt
-    AIResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              modelResponse:
-                type: string
-                description: The AI model's textual response to the prompt.
-          meta:
-            type: object
-            properties:
-              requestId:
-                type: string
-              status:
-                type: string
-              usage:
-                type: object
-                properties:
-                  credits:
-                    type: number
-              screenshots:
-                type: array
-                items:
-                  type: object
   parameters:
-    WindowId:
-      name: windowId
-      in: path
-      required: true
-      description: Identifier of the window within the session.
-      schema:
-        type: string
     SessionId:
       name: sessionId
       in: path
       required: true
       description: Identifier of the cloud browser session.
+      schema:
+        type: string
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
       schema:
         type: string
   securitySchemes:

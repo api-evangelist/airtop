@@ -118,23 +118,12 @@ paths:
                 $ref: '#/components/schemas/EnvelopeResponse'
 components:
   schemas:
-    Envelope:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
-        errors:
-          type: array
-          items:
-            type: object
-        warnings:
-          type: array
-          items:
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
             type: object
     Session:
       type: object
@@ -164,6 +153,31 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Session'
+    SessionResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Session'
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
     SessionConfig:
       type: object
       properties:
@@ -196,20 +210,6 @@ components:
               type: integer
               default: 10
               description: Idle timeout in minutes before the session ends.
-    SessionResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Session'
-    EnvelopeResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
   parameters:
     SessionId:
       name: sessionId
