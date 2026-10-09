@@ -1,20 +1,164 @@
-generated: '2026-07-15'
+generated: '2026-09-23'
 method: generated
-source: openapi/airtop-openapi.yml
+source: openapi/airtop-ai-query-api-openapi.yml, openapi/airtop-page-interaction-api-openapi.yml,
+  openapi/airtop-profiles-api-openapi.yml, openapi/airtop-screenshots-api-openapi.yml, openapi/airtop-sessions-api-openapi.yml,
+  openapi/airtop-windows-api-openapi.yml
 description: Recommended x-agentic-access execution contracts, classified heuristically from
   the OpenAPI. A governance starting point for exposing this API to AI agents — review and bind
   audience per deployment. See research/curity/agentic-governance/.
 summary:
   operations: 20
   by_action_class:
-    connected: 6
-    acting: 14
+    acting: 12
+    connected: 8
   by_consequence:
-    read: 6
-    write: 13
+    write: 11
+    read: 8
     safety-critical: 1
   human_in_the_loop_required: 1
 operations:
+- path: /sessions/{sessionId}/windows/{windowId}/scrape
+  method: post
+  operationId: scrapeContent
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /sessions/{sessionId}/windows/{windowId}/page-query
+  method: post
+  operationId: pageQuery
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /sessions/{sessionId}/windows/{windowId}/paginated-extraction
+  method: post
+  operationId: paginatedExtraction
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
+- path: /sessions/{sessionId}/windows/{windowId}/click
+  method: post
+  operationId: click
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /sessions/{sessionId}/windows/{windowId}/hover
+  method: post
+  operationId: hover
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /sessions/{sessionId}/windows/{windowId}/type
+  method: post
+  operationId: type
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /sessions/{sessionId}/windows/{windowId}/scroll
+  method: post
+  operationId: scroll
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /sessions/{sessionId}/profile
+  method: put
+  operationId: saveProfileOnTermination
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /profiles/{profileId}
+  method: delete
+  operationId: deleteProfile
+  x-agentic-access:
+    action-class: acting
+    consequence: write
+    subject: required
+    audience: null
+    token:
+      max-ttl: 900
+    escalation:
+      human-in-the-loop: conditional
+      triggers:
+      - abnormal
+      - high-value
+    audit: required
+- path: /sessions/{sessionId}/windows/{windowId}/screenshot
+  method: get
+  operationId: takeScreenshot
+  x-agentic-access:
+    action-class: connected
+    consequence: read
+    subject: optional
+    token:
+      max-ttl: 3600
+    audit: none
 - path: /sessions
   method: get
   operationId: listSessions
@@ -67,22 +211,16 @@ operations:
     escalation:
       human-in-the-loop: required
     audit: required
-- path: /sessions/{sessionId}/profile
-  method: put
-  operationId: saveProfileOnTermination
+- path: /requests/{requestId}
+  method: get
+  operationId: getRequestStatus
   x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
+    action-class: connected
+    consequence: read
+    subject: optional
     token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
+      max-ttl: 3600
+    audit: none
 - path: /sessions/{sessionId}/windows
   method: get
   operationId: listWindows
@@ -151,151 +289,3 @@ operations:
       - abnormal
       - high-value
     audit: required
-- path: /sessions/{sessionId}/windows/{windowId}/click
-  method: post
-  operationId: click
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /sessions/{sessionId}/windows/{windowId}/hover
-  method: post
-  operationId: hover
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /sessions/{sessionId}/windows/{windowId}/type
-  method: post
-  operationId: type
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /sessions/{sessionId}/windows/{windowId}/scroll
-  method: post
-  operationId: scroll
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /sessions/{sessionId}/windows/{windowId}/screenshot
-  method: get
-  operationId: takeScreenshot
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
-- path: /sessions/{sessionId}/windows/{windowId}/scrape
-  method: post
-  operationId: scrapeContent
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /sessions/{sessionId}/windows/{windowId}/page-query
-  method: post
-  operationId: pageQuery
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /sessions/{sessionId}/windows/{windowId}/paginated-extraction
-  method: post
-  operationId: paginatedExtraction
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /profiles/{profileId}
-  method: delete
-  operationId: deleteProfile
-  x-agentic-access:
-    action-class: acting
-    consequence: write
-    subject: required
-    audience: null
-    token:
-      max-ttl: 900
-    escalation:
-      human-in-the-loop: conditional
-      triggers:
-      - abnormal
-      - high-value
-    audit: required
-- path: /requests/{requestId}
-  method: get
-  operationId: getRequestStatus
-  x-agentic-access:
-    action-class: connected
-    consequence: read
-    subject: optional
-    token:
-      max-ttl: 3600
-    audit: none
