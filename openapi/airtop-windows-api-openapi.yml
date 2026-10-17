@@ -129,13 +129,31 @@ paths:
                 $ref: '#/components/schemas/WindowResponse'
 components:
   schemas:
-    EnvelopeResponse:
+    Window:
+      type: object
+      properties:
+        windowId:
+          type: string
+        targetId:
+          type: string
+        url:
+          type: string
+        title:
+          type: string
+        liveViewUrl:
+          type: string
+    WindowsListResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
       - type: object
         properties:
           data:
             type: object
+            properties:
+              windows:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Window'
     Envelope:
       type: object
       properties:
@@ -153,6 +171,20 @@ components:
         warnings:
           type: array
           items:
+            type: object
+    WindowResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Window'
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
             type: object
     CreateWindowRequest:
       type: object
@@ -175,38 +207,6 @@ components:
         waitUntilTimeoutSeconds:
           type: integer
           default: 30
-    Window:
-      type: object
-      properties:
-        windowId:
-          type: string
-        targetId:
-          type: string
-        url:
-          type: string
-        title:
-          type: string
-        liveViewUrl:
-          type: string
-    WindowResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Window'
-    WindowsListResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              windows:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Window'
   parameters:
     SessionId:
       name: sessionId

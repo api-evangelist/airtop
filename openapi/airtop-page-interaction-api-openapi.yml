@@ -110,6 +110,22 @@ paths:
                 $ref: '#/components/schemas/AIResponse'
 components:
   schemas:
+    ElementInteractionRequest:
+      type: object
+      properties:
+        elementDescription:
+          type: string
+          description: Natural-language description of the target element.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
+      required:
+      - elementDescription
     ClickRequest:
       allOf:
       - $ref: '#/components/schemas/ElementInteractionRequest'
@@ -130,6 +146,24 @@ components:
                 type: object
           waitForNavigation:
             type: boolean
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
     TypeRequest:
       type: object
       properties:
@@ -155,51 +189,6 @@ components:
           type: object
       required:
       - text
-    Envelope:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
-        errors:
-          type: array
-          items:
-            type: object
-        warnings:
-          type: array
-          items:
-            type: object
-    ScrollRequest:
-      type: object
-      properties:
-        scrollToElement:
-          type: string
-          description: Natural-language description of an element to scroll to.
-        scrollBy:
-          type: object
-          description: Pixel offset to scroll by.
-        configuration:
-          type: object
-    ElementInteractionRequest:
-      type: object
-      properties:
-        elementDescription:
-          type: string
-          description: Natural-language description of the target element.
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
-      required:
-      - elementDescription
     AIResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
@@ -227,6 +216,17 @@ components:
                 type: array
                 items:
                   type: object
+    ScrollRequest:
+      type: object
+      properties:
+        scrollToElement:
+          type: string
+          description: Natural-language description of an element to scroll to.
+        scrollBy:
+          type: object
+          description: Pixel offset to scroll by.
+        configuration:
+          type: object
   parameters:
     SessionId:
       name: sessionId

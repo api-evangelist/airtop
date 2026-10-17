@@ -34,21 +34,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ScreenshotResponse'
 components:
-  parameters:
-    WindowId:
-      name: windowId
-      in: path
-      required: true
-      description: Identifier of the window within the session.
-      schema:
-        type: string
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
   schemas:
     Envelope:
       type: object
@@ -84,6 +69,21 @@ components:
                     dataUrl:
                       type: string
                       description: Base64 data URL of the captured screenshot.
+  parameters:
+    WindowId:
+      name: windowId
+      in: path
+      required: true
+      description: Identifier of the window within the session.
+      schema:
+        type: string
+    SessionId:
+      name: sessionId
+      in: path
+      required: true
+      description: Identifier of the cloud browser session.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

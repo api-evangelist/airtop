@@ -87,6 +87,24 @@ paths:
                 $ref: '#/components/schemas/AIResponse'
 components:
   schemas:
+    Envelope:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            requestId:
+              type: string
+            status:
+              type: string
+        errors:
+          type: array
+          items:
+            type: object
+        warnings:
+          type: array
+          items:
+            type: object
     PaginatedExtractionRequest:
       type: object
       properties:
@@ -111,35 +129,6 @@ components:
               - infinite-scroll
       required:
       - prompt
-    Envelope:
-      type: object
-      properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
-        errors:
-          type: array
-          items:
-            type: object
-        warnings:
-          type: array
-          items:
-            type: object
-    ScrapeRequest:
-      type: object
-      properties:
-        clientRequestId:
-          type: string
-        costThresholdCredits:
-          type: integer
-        timeThresholdSeconds:
-          type: integer
-        configuration:
-          type: object
     AIResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
@@ -196,6 +185,17 @@ components:
               type: object
       required:
       - prompt
+    ScrapeRequest:
+      type: object
+      properties:
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          type: integer
+        timeThresholdSeconds:
+          type: integer
+        configuration:
+          type: object
   parameters:
     SessionId:
       name: sessionId

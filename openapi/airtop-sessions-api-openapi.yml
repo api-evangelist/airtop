@@ -118,29 +118,6 @@ paths:
                 $ref: '#/components/schemas/EnvelopeResponse'
 components:
   schemas:
-    EnvelopeResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-    Session:
-      type: object
-      properties:
-        id:
-          type: string
-        status:
-          type: string
-        cdpWsUrl:
-          type: string
-          description: Chrome DevTools Protocol WebSocket URL for the session.
-        cdpUrl:
-          type: string
-        webDriverUrl:
-          type: string
-        profileName:
-          type: string
     SessionsListResponse:
       allOf:
       - $ref: '#/components/schemas/Envelope'
@@ -153,13 +130,6 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Session'
-    SessionResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Session'
     Envelope:
       type: object
       properties:
@@ -177,6 +147,29 @@ components:
         warnings:
           type: array
           items:
+            type: object
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        cdpWsUrl:
+          type: string
+          description: Chrome DevTools Protocol WebSocket URL for the session.
+        cdpUrl:
+          type: string
+        webDriverUrl:
+          type: string
+        profileName:
+          type: string
+    EnvelopeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
             type: object
     SessionConfig:
       type: object
@@ -210,6 +203,13 @@ components:
               type: integer
               default: 10
               description: Idle timeout in minutes before the session ends.
+    SessionResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/Session'
   parameters:
     SessionId:
       name: sessionId
