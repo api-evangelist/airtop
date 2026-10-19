@@ -1,0 +1,12 @@
+{
+ "url": "https://api.airtop.ai/api/openapi.json",
+ "final": "https://api.airtop.ai/api/openapi.json",
+ "status": 200,
+ "content_type": "application/vnd.oai.openapi+json",
+ "bytes": 532108,
+ "sha256": "1c223fbaa7229a5e143cf9a5592d74343602920aa960f792260cbee8367a5bc1",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

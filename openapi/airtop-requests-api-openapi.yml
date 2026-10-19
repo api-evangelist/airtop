@@ -1,0 +1,750 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Requests API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Requests
+paths:
+  /v1/requests/{requestId}/status:
+    get:
+      operationId: get-request-status
+      parameters:
+      - description: The ID of the request to check.
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: path
+        name: requestId
+        required: true
+        schema:
+          description: The ID of the request to check.
+          examples:
+          - 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatusResponse'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get the status of an asynchronous request
+      tags:
+      - Requests
+      x-fern-audiences:
+      - public
+  /v2/requests/{requestId}/status:
+    get:
+      operationId: get-request-status-v2
+      parameters:
+      - description: The ID of the request to check.
+        example: 123e4567-e89b-12d3-a456-426614174000
+        in: path
+        name: requestId
+        required: true
+        schema:
+          description: The ID of the request to check.
+          examples:
+          - 123e4567-e89b-12d3-a456-426614174000
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestStatusResponseV2'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get the status of an asynchronous request
+      tags:
+      - Requests
+      x-fern-audiences:
+      - beta
+components:
+  schemas:
+    ScreenshotMetadata:
+      additionalProperties: false
+      properties:
+        dataUrl:
+          description: Base64 encoded data URL of screenshot image data
+          type: string
+        fileId:
+          description: Unique identifier for the uploaded file
+          type: string
+        fileName:
+          description: Name of the screenshot file
+          type: string
+        format:
+          description: Format of the screenshot data
+          enum:
+          - base64
+          - url
+          type: string
+        scrollPosition:
+          $ref: '#/components/schemas/ScreenshotScrollPosition'
+          description: Scroll position where the screenshot was taken
+        signedDownloadUrl:
+          description: Signed URL for downloading the screenshot (when format is 'url')
+          type: string
+        urlExpiry:
+          description: Expiration time for the signed URL in ISO format
+          type: string
+        viewportDimensions:
+          $ref: '#/components/schemas/ScreenshotViewportDimensions'
+          description: Viewport dimensions of the screenshot
+      type: object
+    FindOneActionResponseData:
+      additionalProperties: false
+      properties:
+        nodeHandle:
+          $ref: '#/components/schemas/NodeHandle'
+          description: The node handle found by the action
+      type: object
+    NodeHandle:
+      additionalProperties: false
+      properties:
+        id:
+          description: The unique identifier for the node
+          type: string
+        xpath:
+          description: The XPath selector for the node
+          type: string
+      required:
+      - id
+      - xpath
+      type: object
+    ActActionResponseData:
+      additionalProperties: false
+      properties:
+        additionalDataLoaded:
+          description: Whether additional data was loaded after scrolling
+          type: boolean
+        success:
+          description: Whether the action was successful
+          type: boolean
+      required:
+      - success
+      type: object
+    ServiceInfo:
+      additionalProperties: false
+      properties:
+        description:
+          description: Description of the service
+          examples:
+          - Manage your source code on Github
+          type: string
+        isBundled:
+          description: Whether this is a bundled service (no OAuth needed)
+          examples:
+          - false
+          type: boolean
+        isConnected:
+          description: Whether the service is currently connected
+          examples:
+          - false
+          type: boolean
+        serviceId:
+          description: The service identifier (uses public ID/alias from provider config)
+          examples:
+          - github
+          type: string
+        serviceLabel:
+          description: The human-readable service name
+          examples:
+          - GitHub
+          type: string
+        status:
+          description: 'Connection status: connected, disconnected, or error'
+          examples:
+          - connected
+          type: string
+        usageDetails:
+          $ref: '#/components/schemas/UsageDetails'
+          description: Usage details including capabilities, limitations, and best practices
+        version:
+          description: Version of the service
+          examples:
+          - 2
+          format: int64
+          type: integer
+      required:
+      - serviceId
+      - serviceLabel
+      - isConnected
+      - description
+      - isBundled
+      type: object
+    ExternalSessionAiResponseMetadataUsage:
+      additionalProperties: false
+      properties:
+        credits:
+          description: The credit usage for this request
+          format: int64
+          type: integer
+        id:
+          description: The id of the request
+          type: string
+      required:
+      - id
+      - credits
+      type: object
+    ExternalSessionAiResponseMetadata:
+      additionalProperties: false
+      properties:
+        actionId:
+          description: The id of the action that was performed.
+          type: string
+        cacheHit:
+          description: Whether a cached strategy was used for this operation.
+          type: boolean
+        clientProvided:
+          $ref: '#/components/schemas/ClientProvidedResponseMetadata'
+        effort:
+          description: The effort level used for this operation.
+          enum:
+          - low
+          - high
+          type: string
+        requestId:
+          type: string
+        screenshots:
+          description: Array containing any requested screenshots from the operation.
+          items:
+            $ref: '#/components/schemas/ScreenshotMetadata'
+          type:
+          - array
+          - 'null'
+        status:
+          description: Outcome of the operation.
+          enum:
+          - success
+          - partial
+          - failure
+          type: string
+        usage:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadataUsage'
+      required:
+      - status
+      - usage
+      type: object
+    RequestStatusResponse:
+      additionalProperties: false
+      properties:
+        error:
+          description: The error message, if available
+          type: string
+        response:
+          description: The response data, if available
+        status:
+          description: The current status of the request (pending, completed, error)
+          type: string
+      required:
+      - status
+      - response
+      type: object
+    LlmActionResponseData:
+      additionalProperties: false
+      properties:
+        llmResponse:
+          description: The response from the LLM
+          type: string
+      required:
+      - llmResponse
+      type: object
+    LlmActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/LlmActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    FindManyActionResponseData:
+      additionalProperties: false
+      properties:
+        nodeHandles:
+          description: The list of node handles found by the action
+          items:
+            $ref: '#/components/schemas/NodeHandle'
+          type:
+          - array
+          - 'null'
+      required:
+      - nodeHandles
+      type: object
+    ExtractActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/ExtractActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    ServicePromptActionResponseData:
+      additionalProperties: false
+      properties:
+        response:
+          description: The response from the external service system
+          type: string
+      required:
+      - response
+      type: object
+    CaptchaInfo:
+      additionalProperties: false
+      properties:
+        detected:
+          description: Whether a captcha was detected on the page
+          type: boolean
+        error:
+          description: The error message if captcha solving failed
+          type: string
+        solveDurationMs:
+          description: The time in milliseconds it took to solve the captcha
+          format: int32
+          type: integer
+        solved:
+          description: Whether the captcha was successfully solved
+          type: boolean
+      type: object
+    WaitForPageActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/WaitForPageActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    ServicePromptActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/ServicePromptActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    ExtractActionResponseData:
+      additionalProperties: false
+      properties:
+        extractedData:
+          description: The extracted data from the node handle
+          type: string
+      required:
+      - extractedData
+      type: object
+    ScreenshotScrollPosition:
+      additionalProperties: false
+      properties:
+        left:
+          description: Horizontal scroll position in pixels
+          format: int64
+          type: integer
+        top:
+          description: Vertical scroll position in pixels
+          format: int64
+          type: integer
+      required:
+      - top
+      - left
+      type: object
+    ConnectedServicesActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/ConnectedServicesActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    FindManyActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/FindManyActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    UsageDetails:
+      additionalProperties: false
+      properties:
+        bestPractices:
+          description: Best practices for using this service
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        capabilities:
+          description: List of capabilities this service provides
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        limitations:
+          description: List of limitations for this service
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - capabilities
+      - limitations
+      - bestPractices
+      type: object
+    ClientProvidedResponseMetadata:
+      additionalProperties: false
+      properties:
+        clientRequestId:
+          type: string
+      type: object
+    WaitForPageActionResponseData:
+      additionalProperties: false
+      properties:
+        captcha:
+          $ref: '#/components/schemas/CaptchaInfo'
+          description: Captcha information if a captcha was detected on the page
+        loadError:
+          description: Whether there was a page load error
+          type: boolean
+        loadErrorReason:
+          description: The reason for the page load error, if any
+          type: string
+        status:
+          description: The status of the page (domcontentloaded, load, complete, etc.)
+          type: string
+      required:
+      - status
+      type: object
+    FindOneActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/FindOneActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    RequestStatusResponseV2:
+      additionalProperties: false
+      properties:
+        error:
+          description: The error message, if available
+          type: string
+        response:
+          description: The response data, if available
+          format: json
+          oneOf:
+          - $ref: '#/components/schemas/ExtractActionResponseEnvelope'
+          - $ref: '#/components/schemas/ActActionResponseEnvelope'
+          - $ref: '#/components/schemas/FindOneActionResponseEnvelope'
+          - $ref: '#/components/schemas/FindManyActionResponseEnvelope'
+          - $ref: '#/components/schemas/LlmActionResponseEnvelope'
+          - $ref: '#/components/schemas/WaitForPageActionResponseEnvelope'
+          - $ref: '#/components/schemas/NavigateActionResponseEnvelope'
+          - $ref: '#/components/schemas/ServicePromptActionResponseEnvelope'
+          - $ref: '#/components/schemas/ConnectedServicesActionResponseEnvelope'
+          type: object
+        status:
+          description: The current status of the request (pending, completed, error)
+          type: string
+      required:
+      - status
+      - response
+      type: object
+    ScreenshotViewportDimensions:
+      additionalProperties: false
+      properties:
+        height:
+          description: Height of the viewport in pixels
+          format: int64
+          type: integer
+        width:
+          description: Width of the viewport in pixels
+          format: int64
+          type: integer
+      required:
+      - width
+      - height
+      type: object
+    ActActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/ActActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    NavigateActionResponseData:
+      additionalProperties: false
+      properties:
+        status:
+          description: The status of the page
+          type: string
+      required:
+      - status
+      type: object
+    NavigateActionResponseEnvelope:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/NavigateActionResponseData'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/ExternalSessionAiResponseMetadata'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    ConnectedServicesActionResponseData:
+      additionalProperties: false
+      properties:
+        services:
+          description: List of available services with their connection status
+          items:
+            $ref: '#/components/schemas/ServiceInfo'
+          type:
+          - array
+          - 'null'
+      required:
+      - services
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

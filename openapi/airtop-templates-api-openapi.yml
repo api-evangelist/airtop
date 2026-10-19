@@ -1,0 +1,337 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Templates API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Templates
+paths:
+  /v2/templates/{id}:
+    get:
+      operationId: get-agent-template-by-uuid
+      parameters:
+      - description: id of the agent template to get
+        in: path
+        name: id
+        required: true
+        schema:
+          description: id of the agent template to get
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAgentTemplateBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get an agent template by UUID
+      tags:
+      - Templates
+components:
+  schemas:
+    GetAgentTemplateBody:
+      additionalProperties: false
+      properties:
+        templateData:
+          $ref: '#/components/schemas/RawAgentTemplateData'
+          description: Agent template data
+      required:
+      - templateData
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    TemplateKnowledgeBaseDocumentSummary:
+      additionalProperties: false
+      properties:
+        description:
+          description: Brief description of the template snapshot document
+          type: string
+        id:
+          description: Unique identifier for the template snapshot document
+          type: string
+        slug:
+          description: Preferred slug when this template is instantiated
+          type: string
+        sourceDocumentSlug:
+          description: Slug of the source org document when the snapshot was captured
+          type: string
+        title:
+          description: Template snapshot document title
+          type: string
+      required:
+      - id
+      - title
+      - slug
+      - description
+      - sourceDocumentSlug
+      type: object
+    RawAgentTemplateData:
+      additionalProperties: false
+      properties:
+        accessedDomains:
+          description: Domains accessed by the agent
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        agentId:
+          type: string
+        agentTriggeredBy:
+          description: Declared trigger intent copied from the source agent version
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        agentVersion:
+          format: int64
+          type: integer
+        code:
+          type: string
+        configVarsSchema:
+          additionalProperties: {}
+          type: object
+        createdAt:
+          format: date-time
+          type: string
+        deletedAt:
+          format: date-time
+          type: string
+        description:
+          type: string
+        descriptionOverride:
+          description: Description override for marketing display
+          type: string
+        error:
+          type: string
+        externalNotes:
+          description: External notes visible to users
+          type: string
+        featured:
+          description: Whether the template is featured
+          type: boolean
+        id:
+          type: string
+        internalNotes:
+          description: Internal notes for template management
+          type: string
+        isPubliclyAnonymous:
+          type: boolean
+        knowledgeBaseDocuments:
+          description: Knowledge base snapshot documents included with this template.
+          items:
+            $ref: '#/components/schemas/TemplateKnowledgeBaseDocumentSummary'
+          type:
+          - array
+          - 'null'
+        mcpIntegrations:
+          description: MCP integrations used by name
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        mermaidDiagramDetailed:
+          description: Mermaid flowchart of this template at the detailed level
+          type: string
+        mermaidDiagramOverview:
+          description: Mermaid flowchart of this template at the overview level
+          type: string
+        organizationId:
+          type: string
+        preconfiguredConfigVars:
+          additionalProperties: {}
+          type: object
+        privateSharingEnabled:
+          type: boolean
+        proxyConfig:
+          additionalProperties: {}
+          description: Integrated proxy configuration (country, sticky)
+          type: object
+        publicationComments:
+          type: string
+        publicationStatus:
+          type: string
+        redrawAvailableAt:
+          description: When a redraw will be accepted, RFC3339. Absent when one would be accepted now.
+          format: date-time
+          type: string
+        resultSchema:
+          additionalProperties: {}
+          type: object
+        slug:
+          description: Unique slug identifier for the template, used in URLs
+          type: string
+        status:
+          type: string
+        subCategories:
+          description: Sub-category tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        subtitle:
+          type: string
+        supportedTriggerPayloadTypes:
+          description: Best-effort trigger payload types inferred from source automation code
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        tags:
+          description: Category tags
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        technicalDescription:
+          description: Technical description for model-facing template handoff guidance
+          type: string
+        title:
+          type: string
+        titleOverride:
+          description: Title override for marketing display
+          type: string
+        triggerDefinitions:
+          description: Template-safe trigger configuration snapshots for recreating version trigger definitions
+          items:
+            $ref: '#/components/schemas/TemplateTriggerDefinition'
+          type:
+          - array
+          - 'null'
+        updatedAt:
+          format: date-time
+          type: string
+        userId:
+          type: string
+        viceVersion:
+          description: VICE version (1 for v1, 2 for v2)
+          format: int64
+          type: integer
+      required:
+      - id
+      - agentId
+      - agentVersion
+      - viceVersion
+      - organizationId
+      - userId
+      - tags
+      - subCategories
+      - mcpIntegrations
+      - accessedDomains
+      - status
+      - privateSharingEnabled
+      - isPubliclyAnonymous
+      - createdAt
+      - updatedAt
+      - knowledgeBaseDocuments
+      - publicationStatus
+      - featured
+      - agentTriggeredBy
+      - supportedTriggerPayloadTypes
+      - triggerDefinitions
+      type: object
+    TemplateTriggerDefinition:
+      additionalProperties: false
+      properties:
+        config:
+          description: Cross-user trigger intent safe to carry on a template.
+        configVars:
+          description: Optional trigger config vars safe to carry on a template.
+        indexedKey1:
+          description: Optional trigger-specific lookup key safe to carry on a template.
+          type: string
+        setupRequired:
+          description: Whether user-specific trigger setup must be completed after creating from the template.
+          type: boolean
+        triggerType:
+          description: Trigger type, such as gmail, slack, hubspot, or schedule.
+          type: string
+      required:
+      - triggerType
+      - config
+      - setupRequired
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

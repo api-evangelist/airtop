@@ -1,0 +1,451 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Sensitive Values API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Sensitive Values
+paths:
+  /v2/sensitive-value-entries:
+    get:
+      description: List metadata for sensitive value entries stored for the authenticated user. Plaintext field values are never returned.
+      operationId: sensitive-value-entries-list
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSensitiveValueEntriesOutputBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: List sensitive value entries
+      tags:
+      - Sensitive Values
+      x-fern-audiences:
+      - alpha
+    post:
+      description: Store a user-scoped sensitive value entry for the authenticated user. Plaintext field values are accepted on input but not returned in the response.
+      operationId: sensitive-value-entry-create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensitiveValueEntryInput'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensitiveValueEntry'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create sensitive value entry
+      tags:
+      - Sensitive Values
+      x-fern-audiences:
+      - alpha
+  /v2/sensitive-value-entries/{id}:
+    delete:
+      description: Delete a stored sensitive value entry owned by the authenticated user. Deletion is blocked while the entry is referenced by active Agent versions unless force=true, which detaches existing references first.
+      operationId: sensitive-value-entry-delete
+      parameters:
+      - description: Sensitive value entry ID
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Sensitive value entry ID
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      - description: Delete even if active Agents still reference this entry. Existing active references will be detached first.
+        explode: false
+        in: query
+        name: force
+        schema:
+          description: Delete even if active Agents still reference this entry. Existing active references will be detached first.
+          type: boolean
+      responses:
+        '204':
+          description: No Content
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Delete sensitive value entry
+      tags:
+      - Sensitive Values
+      x-fern-audiences:
+      - alpha
+    get:
+      description: Get metadata for a stored sensitive value entry owned by the authenticated user. Plaintext field values are never returned.
+      operationId: sensitive-value-entry-get
+      parameters:
+      - description: Sensitive value entry ID
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Sensitive value entry ID
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensitiveValueEntry'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get sensitive value entry
+      tags:
+      - Sensitive Values
+      x-fern-audiences:
+      - alpha
+    put:
+      description: Replace a stored sensitive value entry while preserving field IDs for existing field keys. Removing referenced fields is blocked.
+      operationId: sensitive-value-entry-update
+      parameters:
+      - description: Sensitive value entry ID
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Sensitive value entry ID
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensitiveValueEntryInput'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensitiveValueEntry'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Update sensitive value entry
+      tags:
+      - Sensitive Values
+      x-fern-audiences:
+      - alpha
+  /v2/sensitive-value-entries/{id}/usages:
+    get:
+      description: List active Agents currently attached to a stored sensitive value entry owned by the authenticated user.
+      operationId: sensitive-value-entry-usages-list
+      parameters:
+      - description: Sensitive value entry ID
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Sensitive value entry ID
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSensitiveValueEntryUsagesOutputBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: List sensitive value entry usages
+      tags:
+      - Sensitive Values
+      x-fern-audiences:
+      - alpha
+components:
+  schemas:
+    SensitiveValueField:
+      additionalProperties: false
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        entryId:
+          type: string
+        fieldKey:
+          type: string
+        fieldLabel:
+          type: string
+        id:
+          type: string
+        redactionToken:
+          type: string
+        sensitivity:
+          type: string
+        sortOrder:
+          format: int64
+          type: integer
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - id
+      - entryId
+      - fieldKey
+      - fieldLabel
+      - sensitivity
+      - redactionToken
+      - sortOrder
+      - createdAt
+      - updatedAt
+      type: object
+    ListSensitiveValueEntryUsagesOutputBody:
+      additionalProperties: false
+      properties:
+        usages:
+          description: Active Agents currently attached to this Vault entry.
+          items:
+            $ref: '#/components/schemas/SensitiveValueEntryUsage'
+          type: array
+      required:
+      - usages
+      type: object
+    ListSensitiveValueEntriesOutputBody:
+      additionalProperties: false
+      properties:
+        sensitiveValueEntries:
+          description: Stored sensitive value catalog metadata for the authenticated user.
+          items:
+            $ref: '#/components/schemas/SensitiveValueEntry'
+          type: array
+      required:
+      - sensitiveValueEntries
+      type: object
+    SensitiveValueEntryUsage:
+      additionalProperties: false
+      properties:
+        agentId:
+          type: string
+        agentName:
+          type: string
+      required:
+      - agentId
+      - agentName
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    SensitiveValueEntryInput:
+      additionalProperties: false
+      properties:
+        accountHint:
+          type: string
+        fields:
+          items:
+            $ref: '#/components/schemas/SensitiveValueFieldInput'
+          type:
+          - array
+          - 'null'
+        label:
+          type: string
+        metadataJson:
+          additionalProperties: {}
+          type: object
+        serviceKey:
+          type: string
+        valueType:
+          type: string
+      required:
+      - valueType
+      - label
+      - fields
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    SensitiveValueFieldInput:
+      additionalProperties: false
+      properties:
+        fieldKey:
+          type: string
+        fieldLabel:
+          type: string
+        sensitivity:
+          type: string
+        sortOrder:
+          format: int64
+          type: integer
+        value:
+          type: string
+      required:
+      - fieldKey
+      - fieldLabel
+      - value
+      - sensitivity
+      type: object
+    SensitiveValueEntry:
+      additionalProperties: false
+      properties:
+        accountHint:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        fields:
+          items:
+            $ref: '#/components/schemas/SensitiveValueField'
+          type:
+          - array
+          - 'null'
+        id:
+          type: string
+        label:
+          type: string
+        lastUsedAt:
+          format: date-time
+          type: string
+        metadataJson:
+          additionalProperties: {}
+          type: object
+        scope:
+          type: string
+        serviceKey:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        valueType:
+          type: string
+      required:
+      - id
+      - scope
+      - valueType
+      - label
+      - fields
+      - createdAt
+      - updatedAt
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

@@ -1,0 +1,660 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Files API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Files
+paths:
+  /v1/files:
+    get:
+      description: Get a list of files filtered by session ID
+      operationId: files-list
+      parameters:
+      - description: A comma-separated list of IDs of the sessionId of the files to retrieve.
+        example:
+        - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        - e39522ce-44f0-456f-9efd-07b3d4fdd9f2
+        explode: true
+        in: query
+        name: sessionIds
+        schema:
+          description: A comma-separated list of IDs of the sessionId of the files to retrieve.
+          examples:
+          - - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+            - e39522ce-44f0-456f-9efd-07b3d4fdd9f2
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      - description: Offset for pagination.
+        example: 1
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: -1
+          description: Offset for pagination.
+          examples:
+          - 1
+          format: int64
+          type: integer
+      - description: Limit for pagination.
+        example: 10
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 10
+          description: Limit for pagination.
+          examples:
+          - 10
+          format: int64
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilesResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get a list of files
+      tags:
+      - Files
+      x-fern-audiences:
+      - public
+    post:
+      operationId: files-create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFileRestInputV1'
+              description: File
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeCreateFileV1EnvelopeDefaultMeta'
+                description: File
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create a file
+      tags:
+      - Files
+      x-fern-audiences:
+      - public
+  /v1/files/{id}:
+    delete:
+      operationId: files-delete
+      parameters:
+      - description: ID of the file
+        in: path
+        name: id
+        required: true
+        schema:
+          description: ID of the file
+          format: uuid
+          type: string
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Delete a file
+      tags:
+      - Files
+      x-fern-audiences:
+      - public
+    get:
+      operationId: files-get
+      parameters:
+      - description: ID of the file
+        in: path
+        name: id
+        required: true
+        schema:
+          description: ID of the file
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeGetFileV1EnvelopeDefaultMeta'
+                description: File
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get a file
+      tags:
+      - Files
+      x-fern-audiences:
+      - public
+  /v1/files/{id}/push:
+    post:
+      description: Push a file to one or more sessions, making it available for the sessions to use
+      operationId: files-push
+      parameters:
+      - description: ID of the file
+        in: path
+        name: id
+        required: true
+        schema:
+          description: ID of the file
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushFileBodyV1'
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Push a file to a session
+      tags:
+      - Files
+      x-fern-audiences:
+      - public
+components:
+  schemas:
+    EnvelopeDefaultMeta:
+      additionalProperties: false
+      properties:
+        requestId:
+          type: string
+      type: object
+    CreateFileRestInputV1:
+      additionalProperties: false
+      properties:
+        fileName:
+          description: Name of the file, must be unique within the session the file is used with
+          type: string
+        fileType:
+          default: customer_upload
+          description: Type of the file
+          enum:
+          - browser_download
+          - screenshot
+          - recording
+          - customer_upload
+          - web_archive
+          type: string
+        id:
+          description: File ID. Must be unique. Leave blank to get one generated for you
+          format: uuid
+          type: string
+        sessionIds:
+          description: IDs of the associated sessions
+          format: uuid
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - fileName
+      type: object
+    FilesWithPagination:
+      additionalProperties: false
+      properties:
+        files:
+          description: List of files.
+          items:
+            $ref: '#/components/schemas/ExternalFile'
+          type:
+          - array
+          - 'null'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          description: Pagination details.
+      required:
+      - files
+      - pagination
+      type: object
+    EnvelopeCreateFileV1EnvelopeDefaultMeta:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/CreateFileV1'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/EnvelopeDefaultMeta'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    Pagination:
+      additionalProperties: false
+      properties:
+        currentLimit:
+          description: The number of items to return
+          format: int64
+          type: integer
+        currentPage:
+          description: The current page number
+          format: int64
+          type: integer
+        finalCount:
+          description: The final count of items displayed on the current page
+          format: int64
+          type: integer
+        hasMore:
+          description: Whether there are more items
+          type: boolean
+        initialCount:
+          description: The initial count of items displayed on the current page
+          format: int64
+          type: integer
+        nextOffset:
+          description: The number of items to skip
+          format: int64
+          type: integer
+        numberOfPages:
+          description: The total number of pages
+          format: int64
+          type: integer
+        totalItems:
+          description: The total number of items
+          format: int64
+          type: integer
+      required:
+      - currentLimit
+      - currentPage
+      - finalCount
+      - hasMore
+      - initialCount
+      - nextOffset
+      - numberOfPages
+      - totalItems
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    FilesResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/FilesWithPagination'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/EnvelopeDefaultMeta'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    CreateFileV1:
+      additionalProperties: false
+      properties:
+        fileBytes:
+          description: Size of the file in bytes
+          format: int64
+          type: integer
+        fileName:
+          description: Name of the file
+          type: string
+        fileType:
+          default: customer_upload
+          description: Type of the file
+          enum:
+          - browser_download
+          - screenshot
+          - recording
+          - customer_upload
+          type: string
+        id:
+          description: ID of the file
+          format: uuid
+          type: string
+        orgId:
+          description: ID of the organization
+          type: string
+        sessionIds:
+          description: IDs of the associated sessions
+          format: uuid
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        status:
+          default: deleted
+          description: Status of the file
+          enum:
+          - available
+          - uploading
+          - upload_failed
+          - deleted
+          type: string
+        uploadStartTime:
+          description: Time when the file upload was started
+          format: date-time
+          type: string
+        uploadUrl:
+          description: URL to upload the file
+          type: string
+      required:
+      - uploadUrl
+      - id
+      - fileName
+      - fileBytes
+      - orgId
+      - fileType
+      - status
+      - uploadStartTime
+      type: object
+    PushFileBodyV1:
+      additionalProperties: false
+      properties:
+        sessionIds:
+          description: A comma-separated list of session IDs to make the file available on.
+          examples:
+          - - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+            - e39522ce-44f0-456f-9efd-07b3d4fdd9f2
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      required:
+      - sessionIds
+      type: object
+    ExternalFile:
+      additionalProperties: false
+      properties:
+        deleted:
+          description: Whether the file has been deleted
+          type: boolean
+        deletionTime:
+          description: Time when the file was deleted
+          format: date-time
+          type:
+          - string
+          - 'null'
+        expiryTime:
+          description: Time when the file will be deleted
+          format: date-time
+          type:
+          - string
+          - 'null'
+        fileBytes:
+          description: Size of the file in bytes
+          format: int64
+          type: integer
+        fileName:
+          description: Name of the file
+          type: string
+        fileType:
+          description: Type of the file
+          type: string
+        id:
+          description: ID of the file
+          format: uuid
+          type: string
+        lastHeartbeatTime:
+          description: Time when the file was last heartbeated
+          format: date-time
+          type:
+          - string
+          - 'null'
+        orgId:
+          description: ID of the organization
+          format: uuid
+          type: string
+        sessionIds:
+          description: IDs of the associated sessions
+          format: uuid
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        status:
+          description: Status of the file
+          type: string
+        uploadCompleteTime:
+          description: Time when the file was uploaded
+          format: date-time
+          type:
+          - string
+          - 'null'
+        uploadStartTime:
+          description: Time when the file was uploaded
+          format: date-time
+          type: string
+        visibleInApi:
+          description: Whether the file is visible in the API
+          type: boolean
+        visibleInPortal:
+          description: Whether the file is visible in the portal
+          type: boolean
+      required:
+      - id
+      - fileName
+      - fileType
+      - orgId
+      - fileBytes
+      - deleted
+      - visibleInApi
+      - visibleInPortal
+      - uploadStartTime
+      - uploadCompleteTime
+      - lastHeartbeatTime
+      - deletionTime
+      - expiryTime
+      - status
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    GetFileV1:
+      additionalProperties: false
+      properties:
+        downloadUrl:
+          description: URL to download the file
+          type: string
+        expiryTime:
+          description: Time when the file will be automatically deleted. Typically 48 hours after the file is uploaded
+          format: date-time
+          type:
+          - string
+          - 'null'
+        fileBytes:
+          description: Size of the file in bytes
+          format: int64
+          type: integer
+        fileName:
+          description: Name of the file
+          type: string
+        fileType:
+          default: customer_upload
+          description: Type of the file
+          enum:
+          - browser_download
+          - screenshot
+          - recording
+          - customer_upload
+          type: string
+        id:
+          description: ID of the file
+          format: uuid
+          type: string
+        orgId:
+          description: ID of the organization
+          type: string
+        sessionIds:
+          description: IDs of the associated sessions
+          format: uuid
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        status:
+          default: deleted
+          description: Status of the file
+          enum:
+          - available
+          - uploading
+          - upload_failed
+          - deleted
+          type: string
+        uploadStartTime:
+          description: Time when the file upload was started
+          format: date-time
+          type: string
+      required:
+      - downloadUrl
+      - expiryTime
+      - id
+      - fileName
+      - fileBytes
+      - orgId
+      - fileType
+      - status
+      - uploadStartTime
+      type: object
+    EnvelopeGetFileV1EnvelopeDefaultMeta:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/GetFileV1'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/EnvelopeDefaultMeta'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

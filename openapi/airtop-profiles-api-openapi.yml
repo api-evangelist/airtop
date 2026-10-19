@@ -1,106 +1,297 @@
 openapi: 3.2.0
 info:
-  title: Airtop Profiles API
-  description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
-  termsOfService: https://www.airtop.ai/legal/terms-of-service
-  contact:
-    name: Airtop Support
-    url: https://docs.airtop.ai
-  version: '1.0'
+  title: Browser Control Profiles API
+  version: 1.0.0
 servers:
-- url: https://api.airtop.ai/api/v1
-  description: Airtop production API
+- url: https://api.airtop.ai/api
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
 - name: Profiles
-  description: Persist and delete browser profiles.
 paths:
-  /sessions/{sessionId}/profile:
-    put:
-      operationId: saveProfileOnTermination
-      tags:
-      - Profiles
-      summary: Save profile on termination
-      description: Marks a named profile to be persisted (cookies, local storage, authenticated state) when the session terminates, so it can be loaded into a future session.
+  /v1/profile/{name}:
+    get:
+      description: Get a profile by name
+      operationId: profile-get-info
       parameters:
-      - $ref: '#/components/parameters/SessionId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                profileName:
-                  type: string
-                  description: Name to save the persisted browser profile under.
-              required:
-              - profileName
-      responses:
-        '200':
-          description: Profile save scheduled.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnvelopeResponse'
-  /profiles/{profileId}:
-    delete:
-      operationId: deleteProfile
-      tags:
-      - Profiles
-      summary: Delete profile
-      description: Deletes a persisted browser profile.
-      parameters:
-      - name: profileId
+      - description: Name of the profile to get
+        example: my-profile
         in: path
+        name: name
         required: true
         schema:
+          description: Name of the profile to get
+          examples:
+          - my-profile
           type: string
       responses:
         '200':
-          description: Profile deleted.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvelopeResponse'
+                $ref: '#/components/schemas/ProfileOutput'
+          description: OK
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unprocessable Entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Internal Server Error
+      summary: Get informations about a profile if it exists
+      tags:
+      - Profiles
+      x-fern-audiences:
+      - alpha
+  /v1/profiles:
+    delete:
+      description: Delete profiles matching by id
+      operationId: profiles-delete
+      parameters:
+      - description: DEPRECATED. Use profileNames.
+        example:
+        - abc
+        - '123'
+        explode: true
+        in: query
+        name: profileIds
+        schema:
+          deprecated: true
+          description: DEPRECATED. Use profileNames.
+          examples:
+          - - abc
+            - '123'
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      - description: A comma-separated list of profile names.
+        example:
+        - abc
+        - '123'
+        explode: true
+        in: query
+        name: profileNames
+        schema:
+          description: A comma-separated list of profile names.
+          examples:
+          - - abc
+            - '123'
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Delete profiles
+      tags:
+      - Profiles
+      x-fern-audiences:
+      - public
+  /v1/profiles-duplicate:
+    post:
+      operationId: profiles-duplicate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profiles-duplicateRequest'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Duplicate profile
+      tags:
+      - Profiles
+      x-fern-audiences:
+      - alpha
+  /v1/profiles-set-display-name:
+    post:
+      description: Set the free-form display name of a profile without changing its immutable name
+      operationId: profiles-set-display-name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profiles-set-display-nameRequest'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Set profile display name
+      tags:
+      - Profiles
+      x-fern-audiences:
+      - alpha
 components:
   schemas:
-    EnvelopeResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-    Envelope:
-      type: object
+    Profiles-set-display-nameRequest:
+      additionalProperties: false
       properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
+        displayName:
+          description: New free-form display name for the profile
+          examples:
+          - My Profile
+          type: string
+        name:
+          description: Immutable name of the profile to relabel
+          examples:
+          - my-profile
+          type: string
+      required:
+      - name
+      - displayName
+      type: object
+    ProfileOutput:
+      additionalProperties: false
+      properties:
+        createdAt:
+          description: The date and time the profile was created. Might be null for old profiles
+          format: date-time
+          type:
+          - string
+          - 'null'
+        createdBy:
+          description: The ID of the user who created the profile. Might be null for profiles created before user-scoping was introduced.
+          type:
+          - string
+          - 'null'
+        displayName:
+          description: Free-form label for the profile. Falls back to the profile name when no display name has been set.
+          type: string
+        name:
+          description: Immutable identifier of the profile.
+          type: string
+        updatedAt:
+          description: The date and time the profile was last updated. Might be null for profiles not updated recently
+          format: date-time
+          type:
+          - string
+          - 'null'
+      required:
+      - name
+      - displayName
+      - createdBy
+      - createdAt
+      - updatedAt
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
         errors:
-          type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
         warnings:
-          type: array
           items:
-            type: object
-  parameters:
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    Profiles-duplicateRequest:
+      additionalProperties: false
+      properties:
+        source:
+          description: name of the profile to duplicate
+          examples:
+          - oldProfile
+          type: string
+        target:
+          description: new name of the profile
+          examples:
+          - newProfile
+          maxLength: 128
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-]+$
+          patternDescription: alphanumeric with hyphen
+          type: string
+      required:
+      - source
+      - target
+      type: object
   securitySchemes:
-    bearerAuth:
-      type: http
+    BearerAuth:
       scheme: bearer
-      description: 'Airtop API key supplied as a Bearer token in the Authorization header: `Authorization: Bearer YOUR_API_KEY`.'
+      type: http
+      x-fern-bearer:
+        name: apiKey

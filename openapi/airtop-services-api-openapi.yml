@@ -1,0 +1,537 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Services API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Services
+paths:
+  /v1/gtm-engineer/{id}/auth/api-proxy:
+    post:
+      operationId: gtm-engineer-api-proxy
+      parameters:
+      - description: The GTM assistant session ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The GTM assistant session ID.
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrationApiProxyRequestBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationApiProxyResponseBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Proxy an integration provider request for a GTM assistant session
+      tags:
+      - Services
+  /v1/gtm-engineer/{id}/auth/linkedin-2-config:
+    get:
+      operationId: gtm-engineer-linkedin-2-config-get
+      parameters:
+      - description: The GTM assistant session ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The GTM assistant session ID.
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedIn2Config'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get LinkedIn integration configuration for a GTM assistant session
+      tags:
+      - Services
+  /v2/agents/{id}/auth/api-proxy:
+    post:
+      description: Proxy an agent-authenticated integration provider API request using server-side provider credentials.
+      operationId: agent-api-proxy
+      parameters:
+      - description: The agent ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The agent ID.
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrationApiProxyRequestBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationApiProxyResponseBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Proxy Integration API Request
+      tags:
+      - Services
+      x-fern-audiences:
+      - beta
+  /v2/sessions/{sessionId}/connected-services:
+    get:
+      description: Get a list of available services and their connection status for a specific session
+      operationId: connected-services
+      parameters:
+      - description: The session id.
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: sessionId
+        required: true
+        schema:
+          description: The session id.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      - description: If true, excludes verbose usageDetails (capabilities, limitations, bestPractices) from the response
+        explode: false
+        in: query
+        name: brief
+        schema:
+          default: false
+          description: If true, excludes verbose usageDetails (capabilities, limitations, bestPractices) from the response
+          type: boolean
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncSessionAiResponseEnvelope'
+          description: Created
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: List Connected Services
+      tags:
+      - Services
+      x-fern-audiences:
+      - beta
+  /v2/sessions/{sessionId}/service:
+    post:
+      description: Execute a natural language prompt to access external services
+      operationId: service
+      parameters:
+      - description: The session id.
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: sessionId
+        required: true
+        schema:
+          description: The session id.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncSessionAiResponseEnvelope'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Service
+      tags:
+      - Services
+      x-fern-audiences:
+      - beta
+  /v2/sessions/{sessionId}/service/tool:
+    post:
+      description: Execute a specific MCP tool directly without LLM orchestration
+      operationId: service-tool
+      parameters:
+      - description: The session id.
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: sessionId
+        required: true
+        schema:
+          description: The session id.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service-toolRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsyncSessionAiResponseEnvelope'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Execute Service Tool
+      tags:
+      - Services
+      x-fern-audiences:
+      - beta
+components:
+  schemas:
+    Service-toolRequest:
+      additionalProperties: false
+      properties:
+        arguments:
+          additionalProperties: {}
+          description: The arguments to pass to the tool
+          type: object
+        async:
+          $ref: '#/components/schemas/AsyncConfig'
+          description: Async configuration options.
+        toolName:
+          description: The namespaced tool name (e.g., 'github_list_issues')
+          type: string
+      required:
+      - toolName
+      - arguments
+      type: object
+    ServiceRequest:
+      additionalProperties: false
+      properties:
+        async:
+          $ref: '#/components/schemas/AsyncConfig'
+          description: Async configuration options.
+        clientRequestId:
+          type: string
+        costThresholdCredits:
+          description: A credit threshold that, once exceeded, will cause the operation to be cancelled. Note that this is *not* a hard limit, but a threshold that is checked periodically during the course of fulfilling the request. A default threshold is used if not specified, but you can use this option to increase or decrease as needed. Set to 0 to disable this feature entirely (not recommended).
+          format: int64
+          type: integer
+        createDraftTestCase:
+          type: boolean
+        parameters:
+          $ref: '#/components/schemas/ServicePromptParameters'
+          description: Structured parameters for service prompt operation
+        prompt:
+          description: Natural language prompt to be processed by external services
+          examples:
+          - Read the data from my Google sheet named 'Project Tasks'
+          type: string
+        service:
+          description: The specific service to use for the operation
+          examples:
+          - google-sheet
+          type: string
+        timeThresholdSeconds:
+          description: 'A time threshold in seconds that, once exceeded, will cause the operation to be cancelled. Note that this is *not* a hard limit, but a threshold that is checked periodically during the course of fulfilling the request. A default threshold is used if not specified, but you can use this option to increase or decrease as needed. Set to 0 to disable this feature entirely (not recommended).
+
+
+            This setting does not extend the maximum session duration provided at the time of session creation.'
+          format: int64
+          type: integer
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    AsyncConfig:
+      additionalProperties: false
+      properties:
+        payload:
+          additionalProperties: {}
+          description: Optional metadata to include in the webhook response. This data is passed through unchanged.
+          type: object
+        webhookHeaders:
+          additionalProperties:
+            type: string
+          description: Optional headers to include when calling the webhook URL. Keys are header names and values are header values.
+          type: object
+        webhookUrl:
+          description: The URL to send the response to when the request is complete.
+          type: string
+      type: object
+    IntegrationApiProxyResponseBody:
+      additionalProperties: false
+      properties:
+        body:
+          description: JSON body returned by the upstream provider, when parseable as JSON.
+        bodyText:
+          description: Text body returned by the upstream provider, when not parseable as JSON.
+          type: string
+        headers:
+          additionalProperties:
+            type: string
+          description: Filtered response headers returned by the upstream provider.
+          type: object
+        statusCode:
+          description: HTTP status code returned by the upstream provider.
+          format: int64
+          type: integer
+      required:
+      - statusCode
+      - headers
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    ServicePromptParameters:
+      additionalProperties: false
+      properties:
+        outputSchema:
+          description: 'JSON schema for structured output. Requirements: root must be object, all fields required, every object needs additionalProperties:false. No format/pattern keywords. Include ''error'' field for failures.'
+          examples:
+          - '{"type":"object","properties":{"data":{"type":"string"},"error":{"type":"string"}},"required":["data","error"],"additionalProperties":false}'
+          type: string
+        prompt:
+          description: Natural language prompt to be processed by external services
+          examples:
+          - 'Read the data from my Google sheet that''s found at the following URL: https://docs.google.com/...'
+          type: string
+        services:
+          $ref: '#/components/schemas/StringOrStringArray'
+          description: Service(s) to use for the operation - can be a single string or array of strings
+      required:
+      - prompt
+      type: object
+    StringOrStringArray:
+      description: Can be either a single string or an array of strings
+      oneOf:
+      - type: string
+      - items:
+          type: string
+        type: array
+    LinkedIn2Config:
+      additionalProperties: false
+      properties:
+        enabledOperations:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        enabledProviders:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        waterfall:
+          additionalProperties:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          type: object
+      required:
+      - enabledOperations
+      - enabledProviders
+      - waterfall
+      type: object
+    IntegrationApiProxyRequestBody:
+      additionalProperties: false
+      properties:
+        baseUrl:
+          description: Optional provider base URL override. The host must match the configured provider host.
+          type: string
+        data:
+          description: Optional JSON request body to send to the provider.
+        endpoint:
+          description: Provider endpoint path, optionally including a query string.
+          type: string
+        method:
+          description: HTTP method to call on the provider.
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          type: string
+        operation:
+          description: LinkedIn replacement operation being performed, such as PersonsActivitiesPosts.
+          type: string
+        organizationId:
+          description: Organization ID for OAuth provider credentials. Use bundled or omit for bundled providers.
+          type: string
+        passthroughHeaders:
+          additionalProperties:
+            type: string
+          description: Allowed non-sensitive headers to pass through to the provider. Currently supports Accept and Content-Type.
+          type: object
+        providerConfigKey:
+          description: Provider config key, such as limadata.
+          type: string
+        providerType:
+          description: Provider auth type. Defaults to the provider configuration.
+          enum:
+          - bundled
+          - oauth
+          type: string
+        retries:
+          description: Optional retry count. Omit to use the provider default; an explicit value (including 0 to disable retries) is respected, capped server-side.
+          format: int64
+          type: integer
+        timeoutMs:
+          description: Optional timeout in milliseconds. Capped server-side.
+          format: int64
+          type: integer
+      required:
+      - method
+      - endpoint
+      - providerConfigKey
+      type: object
+    AsyncSessionAiResponseEnvelope:
+      additionalProperties: false
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        requestId:
+          type: string
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - requestId
+      - errors
+      - warnings
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

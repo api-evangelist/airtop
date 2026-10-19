@@ -47,66 +47,6 @@ created: '2026-06-20'
 modified: '2026-06-20'
 specificationVersion: '0.23'
 apis:
-- aid: airtop:airtop-ai-query-api
-  name: Airtop AI Query API
-  description: Query, extract, and scrape page content with AI.
-  humanURL: https://docs.airtop.ai/api-reference/airtop-api
-  baseURL: https://api.airtop.ai/api/v1
-  tags:
-  - AI Query
-  properties:
-  - type: OpenAPI
-    url: openapi/airtop-ai-query-api-openapi.yml
-  - type: Documentation
-    url: https://docs.airtop.ai/guides/how-to/creating-a-session
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
-  - type: Postman
-    url: collections/airtop.postman_collection.json
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api
-  - type: Documentation
-    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api
-- aid: airtop:airtop-page-interaction-api
-  name: Airtop Page Interaction API
-  description: Drive a page with natural-language click, type, hover, and scroll.
-  humanURL: https://docs.airtop.ai/api-reference/airtop-api
-  baseURL: https://api.airtop.ai/api/v1
-  tags:
-  - Page Interaction
-  properties:
-  - type: OpenAPI
-    url: openapi/airtop-page-interaction-api-openapi.yml
-  - type: Documentation
-    url: https://docs.airtop.ai/guides/how-to/creating-a-session
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
-  - type: Postman
-    url: collections/airtop.postman_collection.json
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api
-  - type: Documentation
-    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api
 - aid: airtop:airtop-profiles-api
   name: Airtop Profiles API
   description: Persist and delete browser profiles.
@@ -117,36 +57,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/airtop-profiles-api-openapi.yml
-  - type: Documentation
-    url: https://docs.airtop.ai/guides/how-to/creating-a-session
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
-  - type: Postman
-    url: collections/airtop.postman_collection.json
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api
-  - type: Documentation
-    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
-  - type: APIReference
-    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
-  - type: Documentation
-    url: https://docs.airtop.ai/api-reference/airtop-api
-- aid: airtop:airtop-screenshots-api
-  name: Airtop Screenshots API
-  description: Capture window screenshots.
-  humanURL: https://docs.airtop.ai/api-reference/airtop-api
-  baseURL: https://api.airtop.ai/api/v1
-  tags:
-  - Screenshots
-  properties:
-  - type: OpenAPI
-    url: openapi/airtop-screenshots-api-openapi.yml
   - type: Documentation
     url: https://docs.airtop.ai/guides/how-to/creating-a-session
   - type: APIReference
@@ -207,6 +117,396 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/airtop-windows-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-agent-director-api
+  name: Airtop Agent Director API
+  description: The Agent Director API from Airtop — 1 operation(s) for agent director.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Agent Director
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-agent-director-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-agent-folders-api
+  name: Airtop Agent Folders API
+  description: The Agent Folders API from Airtop — 3 operation(s) for agent folders.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Agent Folders
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-agent-folders-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-agents-api
+  name: Airtop Agents API
+  description: The Agents API from Airtop — 61 operation(s) for agents.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Agents
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-agents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-automations-api
+  name: Airtop Automations API
+  description: The Automations API from Airtop — 3 operation(s) for automations.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Automations
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-automations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-beta-api
+  name: Airtop Beta API
+  description: The beta API from Airtop — 2 operation(s) for beta.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - beta
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-beta-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-files-api
+  name: Airtop Files API
+  description: The files API from Airtop — 3 operation(s) for files.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - files
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-files-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-gtm-engineer-api
+  name: Airtop GTM Engineer API
+  description: The GTM Engineer API from Airtop — 21 operation(s) for gtm engineer.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - GTM Engineer
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-gtm-engineer-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-knowledge-base-api
+  name: Airtop Knowledge Base API
+  description: The Knowledge Base API from Airtop — 9 operation(s) for knowledge base.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Knowledge Base
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-knowledge-base-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-requests-api
+  name: Airtop Requests API
+  description: The Requests API from Airtop — 2 operation(s) for requests.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Requests
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-requests-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-sensitive-values-api
+  name: Airtop Sensitive Values API
+  description: The Sensitive Values API from Airtop — 3 operation(s) for sensitive values.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Sensitive Values
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-sensitive-values-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-services-api
+  name: Airtop Services API
+  description: The Services API from Airtop — 6 operation(s) for services.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Services
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-services-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-team-vault-api
+  name: Airtop Team Vault API
+  description: The Team Vault API from Airtop — 4 operation(s) for team vault.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Team Vault
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-team-vault-api-openapi.yml
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/creating-a-session
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/sessions/create
+  - type: Postman
+    url: collections/airtop.postman_collection.json
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/create
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api
+  - type: Documentation
+    url: https://docs.airtop.ai/guides/how-to/ai/page-interactions
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/click
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/page-query
+  - type: APIReference
+    url: https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction
+  - type: Documentation
+    url: https://docs.airtop.ai/api-reference/airtop-api
+- aid: airtop:airtop-templates-api
+  name: Airtop Templates API
+  description: The Templates API from Airtop — 1 operation(s) for templates.
+  humanURL: https://docs.airtop.ai/api-reference/airtop-api
+  baseURL: https://api.airtop.ai/api/v1
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/airtop-templates-api-openapi.yml
   - type: Documentation
     url: https://docs.airtop.ai/guides/how-to/creating-a-session
   - type: APIReference

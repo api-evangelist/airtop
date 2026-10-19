@@ -1,0 +1,1805 @@
+openapi: 3.2.0
+info:
+  title: Browser Control GTM Engineer API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: GTM Engineer
+paths:
+  /v1/gtm-engineer:
+    post:
+      operationId: gtm-engineer-create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGtmEngineerInputBody'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GtmEngineerSession'
+          description: Created
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create a gtm-engineer session
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/chat:
+    delete:
+      description: Deletes the chat thread for the current user, causing the next session to start with a fresh conversation.
+      operationId: gtm-engineer-chat-delete
+      parameters:
+      - description: Assistant whose conversation history should be cleared.
+        explode: false
+        in: query
+        name: assistantMode
+        schema:
+          default: mark
+          description: Assistant whose conversation history should be cleared.
+          enum:
+          - mark
+          - agent-director
+          type: string
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Clear GTM engineer conversation history
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}:
+    delete:
+      operationId: gtm-engineer-delete
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Terminate a gtm-engineer session
+      tags:
+      - GTM Engineer
+    get:
+      operationId: gtm-engineer-get
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GtmEngineerStatusResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get gtm-engineer session status
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/agent-invocations/activity:
+    get:
+      description: Returns recent invocations for agents in the current assistant mode's agent set.
+      operationId: gtm-engineer-agent-invocation-activity-get
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGtmEngineerAgentInvocationActivityBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get agent invocation activity for a GTM Engineer session
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/agent-invocations/running:
+    get:
+      description: Returns currently active manual invocations for agents available to the current assistant mode.
+      operationId: gtm-engineer-running-agent-invocations-get
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGtmEngineerRunningAgentInvocationsBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get running agent invocations for a GTM Engineer session
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/agents/{agentId}/draft/start:
+    post:
+      description: Creates a draft for an eligible current-user agent and starts a detached Agent Builder session for requested changes. If Agent Builder is already active for this agent, the existing session is returned without touching the draft. If the agent already has an unpublished dormant draft, no new draft work is started.
+      operationId: gtm-engineer-agent-draft-start
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      - description: Agent ID to open a draft for
+        in: path
+        name: agentId
+        required: true
+        schema:
+          description: Agent ID to open a draft for
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartGtmEngineerAgentDraftRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartGtmEngineerAgentDraftResponse'
+          description: Created
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Start Agent Builder work on a new draft for a GTM Engineer agent
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/agents/{agentId}/invocations/async:
+    post:
+      description: Creates an async invocation for an agent the current GTM Engineer user may invoke.
+      operationId: gtm-engineer-agent-invocation-create-async
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      - description: Agent ID to invoke from this GTM Engineer session
+        in: path
+        name: agentId
+        required: true
+        schema:
+          description: Agent ID to invoke from this GTM Engineer session
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGtmEngineerAgentAsyncInvocationRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAsyncAgentInvocationBody'
+          description: Created
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create an async agent invocation from GTM Engineer
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/agents/{agentId}/vice-session/start:
+    post:
+      description: Creates or returns a detached VICE browser session for an agent created by the current GTM Engineer session. This starts the browser/VICE infrastructure; autonomous VICE chat bootstrap is handled by GTM Engineer as a separate step.
+      operationId: gtm-engineer-agent-vice-session-start
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      - description: Agent ID to start in detached VICE mode
+        in: path
+        name: agentId
+        required: true
+        schema:
+          description: Agent ID to start in detached VICE mode
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartGtmEngineerAgentViceSessionRequest'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartGtmEngineerAgentViceSessionResponse'
+          description: Created
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Start a detached VICE session for a GTM Engineer agent
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/ai-usage:
+    post:
+      operationId: gtm-engineer-record-ai-usage
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordGtmEngineerAiUsageInputBody'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Record a single AI usage row for a gtm-engineer session
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/auth:
+    post:
+      operationId: gtm-engineer-auth-validate
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateFrontendAuthFromGtmEngineerInputBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidKeyBodyV1'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Validate frontend auth from gtm-engineer
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/auth/api-proxy:
+    post:
+      operationId: gtm-engineer-api-proxy
+      parameters:
+      - description: The GTM assistant session ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The GTM assistant session ID.
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntegrationApiProxyRequestBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationApiProxyResponseBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                default: application/json
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Proxy an integration provider request for a GTM assistant session
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/auth/linkedin-2-config:
+    get:
+      operationId: gtm-engineer-linkedin-2-config-get
+      parameters:
+      - description: The GTM assistant session ID.
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The GTM assistant session ID.
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedIn2Config'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get LinkedIn integration configuration for a GTM assistant session
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/avarice/recoverable-work:
+    get:
+      description: Returns durable current-draft Avarice runs and live pre-run Avarice sessions for agents owned by the current assistant mode.
+      operationId: gtm-engineer-recoverable-avarice-work-get
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGtmEngineerRecoverableAvariceWorkBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get recoverable Avarice work for a GTM Engineer session
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/check-credits:
+    post:
+      operationId: gtm-engineer-check-credits
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckGtmEngineerCreditsInputBody'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Check whether a Mark session may continue spending credits
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/external-messages/outbound:
+    post:
+      operationId: external-director-outbound-message-publish
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalDirectorOutboundMessageInputBody'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Publish an Agent Director outbound message to an external channel
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/files:
+    post:
+      operationId: gtm-engineer-resource-file-create
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGtmEngineerResourceFileInputBody'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeGtmEngineerResourceFileEnvelopeDefaultMeta'
+                description: GTM Engineer resource file
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create a GTM engineer resource file upload
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/files/{fileId}:
+    get:
+      operationId: gtm-engineer-resource-file-get
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      - description: Uploaded file ID
+        in: path
+        name: fileId
+        required: true
+        schema:
+          description: Uploaded file ID
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnvelopeGtmEngineerResourceFileEnvelopeDefaultMeta'
+                description: GTM Engineer resource file
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get a GTM engineer resource file
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/last-active:
+    post:
+      operationId: gtm-engineer-last-active
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateGtmEngineerLastActiveRequest'
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Update gtm-engineer session last active time
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/notifications:
+    post:
+      description: Publish a backend-classified GTM Engineer user notification through Portal
+      operationId: gtm-engineer-notification-create
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishGtmEngineerUserNotificationInputBody'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Publish GTM Engineer notification
+      tags:
+      - GTM Engineer
+  /v1/gtm-engineer/{id}/submit-billing:
+    post:
+      operationId: gtm-engineer-submit-billing
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitGtmEngineerBillingInputBody'
+        required: true
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Submit billing for a gtm-engineer session
+      tags:
+      - GTM Engineer
+  /v1/sessions/{id}/gtm-engineer/assets-upload-url:
+    get:
+      description: Create a presigned URL for uploading gtm-engineer session assets to S3
+      operationId: gtm-engineer-asset-upload-url-create
+      parameters:
+      - description: GTM Engineer session ID
+        in: path
+        name: id
+        required: true
+        schema:
+          description: GTM Engineer session ID
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGtmEngineerAssetUploadUrlBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create a gtm-engineer session asset upload URL
+      tags:
+      - GTM Engineer
+components:
+  schemas:
+    StartGtmEngineerAgentDraftRequest:
+      additionalProperties: false
+      properties:
+        initialPrompt:
+          description: Prompt describing the requested changes for Agent Builder.
+          type: string
+        timeoutMinutes:
+          description: Detached VICE idle timeout in minutes. Defaults to GTM_ENGINEER_DETACHED_VICE_TIMEOUT_MINUTES.
+          format: int64
+          maximum: 1440
+          minimum: 1
+          type: integer
+      required:
+      - initialPrompt
+      type: object
+    CreateGtmEngineerAgentAsyncInvocationRequest:
+      additionalProperties: false
+      properties:
+        configVars:
+          description: Config variables JSON override.
+          type: string
+        invocationType:
+          description: Invocation type (Manual or Trigger). Defaults to Manual.
+          enum:
+          - Manual
+          - Trigger
+          type: string
+        triggerMetadata:
+          additionalProperties: {}
+          description: Non-PII trigger metadata for the invocation
+          type: object
+        triggerPayload:
+          description: Hidden runtime trigger payload for trigger-based invocations. This is injected into wf.getTriggerPayload() and is not exposed through automation parameters.
+          type: string
+        version:
+          description: Agent version to run. Defaults to the published version.
+          format: int64
+          type: integer
+      type: object
+    GtmEngineerConfig:
+      additionalProperties: false
+      properties:
+        assistantMode:
+          enum:
+          - mark
+          - agent-director
+          type: string
+        imageTag:
+          type: string
+        prompt:
+          type: string
+        targetAgentId:
+          format: uuid
+          type: string
+        targetAgentName:
+          readOnly: true
+          type: string
+        terminateExisting:
+          type: boolean
+        timeoutMinutes:
+          format: int64
+          type: integer
+      type: object
+    StartGtmEngineerAgentDraftResponse:
+      additionalProperties: false
+      properties:
+        activeBuilderSession:
+          $ref: '#/components/schemas/StartGtmEngineerAgentViceSessionResponse'
+          description: Existing detached Agent Builder session when draft work is already active
+        agentId:
+          description: Agent ID attached to the draft
+          type: string
+        agentName:
+          description: Agent display name
+          type: string
+        draftInitialPrompt:
+          description: Initial prompt on an existing dormant draft
+          type: string
+        draftUpdatedAt:
+          description: Last update timestamp for an existing dormant draft
+          format: date-time
+          type: string
+        draftVersion:
+          description: Draft version being edited
+          format: int64
+          type: integer
+        message:
+          description: Human-readable status message for non-started outcomes
+          type: string
+        session:
+          $ref: '#/components/schemas/StartGtmEngineerAgentViceSessionResponse'
+          description: Detached VICE session started for Agent Builder
+        status:
+          description: Whether new draft work started, an existing builder session was found, or draft work was blocked
+          type: string
+      required:
+      - agentId
+      - agentName
+      - status
+      type: object
+    GtmEngineerSession:
+      additionalProperties: false
+      properties:
+        config:
+          $ref: '#/components/schemas/GtmEngineerConfig'
+        createdAt:
+          format: date-time
+          type: string
+        endedAt:
+          format: date-time
+          type: string
+        endedReason:
+          type: string
+        gtmChatId:
+          type: string
+        id:
+          type: string
+        reusedExistingSession:
+          type: boolean
+        startedAt:
+          format: date-time
+          type: string
+        status:
+          type: string
+      required:
+      - id
+      - status
+      - createdAt
+      type: object
+    AvariceKeepaliveData:
+      additionalProperties: false
+      properties:
+        agentId:
+          description: Agent id associated with the Avarice build.
+          type: string
+        avariceChatId:
+          description: Avarice chat id associated with the keepalive.
+          type: string
+        avariceRunId:
+          description: Avarice local run id associated with the keepalive.
+          format: int64
+          type: integer
+        avariceSessionId:
+          description: Avarice browser session id associated with the keepalive.
+          type: string
+        currentPhase:
+          description: Avarice current phase and one-based sequence, for example testing-1.
+          type: string
+        reason:
+          description: 'Avarice keepalive reason: start, interval, or final.'
+          type: string
+        status:
+          description: Avarice run status associated with the keepalive.
+          type: string
+      type: object
+    RawAgentInvocationWithAgentData:
+      additionalProperties: false
+      properties:
+        agentId:
+          type: string
+        agentName:
+          type: string
+        agentVersion:
+          format: int64
+          type: integer
+        agentVersionIsDraft:
+          type: boolean
+        aiUsageCredits:
+          format: float
+          type: number
+        callbackConfig:
+          $ref: '#/components/schemas/CallbackConfig'
+        code:
+          type: string
+        completedAt:
+          format: date-time
+          type: string
+        configVars:
+          additionalProperties: {}
+          type: object
+        cpuUsageCredits:
+          format: float
+          type: number
+        createdAt:
+          format: date-time
+          type: string
+        creditsFinalized:
+          type: boolean
+        error:
+          description: Invocation error. Oversized error details are truncated with a marker.
+          type: string
+        errorCode:
+          type: string
+        id:
+          type: string
+        invocationType:
+          type: string
+        log:
+          description: Invocation log. Omitted from list responses and when a detail log exceeds the response size limit.
+          type: string
+        logSizeBytes:
+          description: Full invocation log size in bytes, including when log is omitted.
+          format: int64
+          type: integer
+        mcpSessionId:
+          type: string
+        output:
+          description: Invocation result. Omitted from list responses and when a detail result exceeds the response size limit.
+          type: string
+        profileName:
+          type: string
+        proxyUsageCredits:
+          format: float
+          type: number
+        sessionId:
+          type: string
+        startedAt:
+          format: date-time
+          type: string
+        status:
+          type: string
+        statusUpdatedAt:
+          format: date-time
+          type: string
+        subagentRuns:
+          items:
+            $ref: '#/components/schemas/RawAgentInvocationSubagentRun'
+          type:
+          - array
+          - 'null'
+        totalCreditsUsed:
+          format: float
+          type: number
+        triggerMetadata:
+          additionalProperties: {}
+          type: object
+        userId:
+          type: string
+        webhookId:
+          type: string
+      required:
+      - agentName
+      - id
+      - agentId
+      - status
+      - createdAt
+      - invocationType
+      type: object
+    IntegrationApiProxyResponseBody:
+      additionalProperties: false
+      properties:
+        body:
+          description: JSON body returned by the upstream provider, when parseable as JSON.
+        bodyText:
+          description: Text body returned by the upstream provider, when not parseable as JSON.
+          type: string
+        headers:
+          additionalProperties:
+            type: string
+          description: Filtered response headers returned by the upstream provider.
+          type: object
+        statusCode:
+          description: HTTP status code returned by the upstream provider.
+          format: int64
+          type: integer
+      required:
+      - statusCode
+      - headers
+      type: object
+    CreateAsyncAgentInvocationBody:
+      additionalProperties: false
+      properties:
+        invocation_id:
+          description: invocation id
+          format: uuid
+          type: string
+      required:
+      - invocation_id
+      type: object
+    LinkedIn2Config:
+      additionalProperties: false
+      properties:
+        enabledOperations:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        enabledProviders:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        waterfall:
+          additionalProperties:
+            items:
+              type: string
+            type:
+            - array
+            - 'null'
+          type: object
+      required:
+      - enabledOperations
+      - enabledProviders
+      - waterfall
+      type: object
+    ValidKeyBodyV1:
+      additionalProperties: false
+      properties:
+        isValid:
+          description: Whether the credential is valid
+          type: boolean
+        organizationId:
+          description: Organization ID
+          type: string
+        portalUserId:
+          description: Portal user ID
+          type: string
+      required:
+      - isValid
+      type: object
+    GetGtmEngineerRunningAgentInvocationsBody:
+      additionalProperties: false
+      properties:
+        invocations:
+          description: Currently active manual invocations for agents in this assistant mode's agent set.
+          items:
+            $ref: '#/components/schemas/RawAgentInvocationWithAgentData'
+          type:
+          - array
+          - 'null'
+      required:
+      - invocations
+      type: object
+    EnvelopeGtmEngineerResourceFileEnvelopeDefaultMeta:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/GtmEngineerResourceFile'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/EnvelopeDefaultMeta'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    EnvelopeDefaultMeta:
+      additionalProperties: false
+      properties:
+        requestId:
+          type: string
+      type: object
+    ExternalDirectorOutboundMessageInputBody:
+      additionalProperties: false
+      properties:
+        includeOpenDirectorLink:
+          type: boolean
+        messageId:
+          type: string
+        outboundRoute:
+          $ref: '#/components/schemas/ExternalDirectorOutboundRoute'
+        text:
+          type: string
+      required:
+      - messageId
+      - text
+      - outboundRoute
+      type: object
+    RecoverableAvariceSessionData:
+      additionalProperties: false
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        sessionId:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - sessionId
+      - createdAt
+      - updatedAt
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    RecordGtmEngineerAiUsageInputBody:
+      additionalProperties: false
+      properties:
+        aiCostInCents:
+          description: AI cost in cents for this usage record
+          format: float
+          type: number
+        internalId:
+          description: Unique identifier for deduplication
+          type: string
+        source:
+          description: Source label for the usage (e.g. service-tool-direct)
+          type: string
+      required:
+      - internalId
+      - aiCostInCents
+      type: object
+    AvariceRunData:
+      additionalProperties: false
+      properties:
+        agentId:
+          type: string
+        avariceChatId:
+          type: string
+        avariceRunId:
+          format: int64
+          type: integer
+        avariceSessionId:
+          type: string
+        buildResult:
+          additionalProperties: {}
+          type: object
+        completedAt:
+          format: date-time
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        createdByUserId:
+          type: string
+        currentPhase:
+          type: string
+        draftVersion:
+          format: int64
+          type: integer
+        errors:
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+        gtmSessionId:
+          type: string
+        handoff:
+          additionalProperties: {}
+          type: object
+        id:
+          type: string
+        markInvocationId:
+          type: string
+        markInvocationStatus:
+          type: string
+        markSemanticReview:
+          type: string
+        markSemanticReviewedAt:
+          format: date-time
+          type: string
+        markSemanticVerdict:
+          type: string
+        markTestResult:
+          additionalProperties: {}
+          type: object
+        markTestSummary:
+          type: string
+        markTestedAt:
+          format: date-time
+          type: string
+        markTestedVersion:
+          format: int64
+          type: integer
+        organizationId:
+          type: string
+        patchStatus:
+          type: string
+        readyForInvocation:
+          type: boolean
+        status:
+          type: string
+        testingVerdict:
+          type: string
+        transcriptSummary:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+      - id
+      - organizationId
+      - agentId
+      - createdByUserId
+      - status
+      - readyForInvocation
+      - errors
+      - createdAt
+      - updatedAt
+      type: object
+    RecoverableAvariceWorkData:
+      additionalProperties: false
+      properties:
+        agentId:
+          type: string
+        agentName:
+          type: string
+        draftCreatedAt:
+          format: date-time
+          type: string
+        draftVersion:
+          format: int64
+          type: integer
+        run:
+          $ref: '#/components/schemas/AvariceRunData'
+        session:
+          $ref: '#/components/schemas/RecoverableAvariceSessionData'
+      required:
+      - agentId
+      - agentName
+      - draftVersion
+      - draftCreatedAt
+      type: object
+    CreateGtmEngineerResourceFileInputBody:
+      additionalProperties: false
+      properties:
+        fileName:
+          description: Name of the uploaded resource file.
+          type: string
+      required:
+      - fileName
+      type: object
+    IntegrationApiProxyRequestBody:
+      additionalProperties: false
+      properties:
+        baseUrl:
+          description: Optional provider base URL override. The host must match the configured provider host.
+          type: string
+        data:
+          description: Optional JSON request body to send to the provider.
+        endpoint:
+          description: Provider endpoint path, optionally including a query string.
+          type: string
+        method:
+          description: HTTP method to call on the provider.
+          enum:
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+          type: string
+        operation:
+          description: LinkedIn replacement operation being performed, such as PersonsActivitiesPosts.
+          type: string
+        organizationId:
+          description: Organization ID for OAuth provider credentials. Use bundled or omit for bundled providers.
+          type: string
+        passthroughHeaders:
+          additionalProperties:
+            type: string
+          description: Allowed non-sensitive headers to pass through to the provider. Currently supports Accept and Content-Type.
+          type: object
+        providerConfigKey:
+          description: Provider config key, such as limadata.
+          type: string
+        providerType:
+          description: Provider auth type. Defaults to the provider configuration.
+          enum:
+          - bundled
+          - oauth
+          type: string
+        retries:
+          description: Optional retry count. Omit to use the provider default; an explicit value (including 0 to disable retries) is respected, capped server-side.
+          format: int64
+          type: integer
+        timeoutMs:
+          description: Optional timeout in milliseconds. Capped server-side.
+          format: int64
+          type: integer
+      required:
+      - method
+      - endpoint
+      - providerConfigKey
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    RawAgentInvocationSubagentRun:
+      additionalProperties: false
+      properties:
+        attempts:
+          description: Non-negative number of attempts run by this runtime sub-agent.
+          format: int64
+          minimum: 0
+          type: integer
+        completedAt:
+          description: ISO timestamp when the runtime sub-agent completed or failed.
+          type: string
+        durationMs:
+          description: Non-negative runtime sub-agent duration in milliseconds.
+          format: int64
+          minimum: 0
+          type: integer
+        error:
+          description: Redacted, truncated sub-agent error summary.
+          maxLength: 500
+          type: string
+        errorCode:
+          description: Stable runtime sub-agent error code when available.
+          maxLength: 120
+          type: string
+        goal:
+          description: Human-readable runtime sub-agent goal.
+          maxLength: 1000
+          type: string
+        key:
+          description: Stable runtime sub-agent key generated in workflow code.
+          maxLength: 120
+          type: string
+        logCount:
+          description: Number of local sub-agent log entries captured in the parent invocation log.
+          format: int64
+          minimum: 0
+          type: integer
+        logs:
+          description: Bounded, redacted local sub-agent log entries for run-history DAG inspection.
+          items:
+            $ref: '#/components/schemas/RawAgentInvocationSubagentRunLog'
+          maxItems: 20
+          type:
+          - array
+          - 'null'
+        name:
+          description: Human-readable runtime sub-agent name.
+          maxLength: 200
+          type: string
+        outputSummary:
+          description: Redacted, truncated summary of the sub-agent output. Full output is not persisted in this trace.
+          maxLength: 500
+          type: string
+        parallelGroup:
+          description: Optional generated parallel group or phase identifier.
+          maxLength: 120
+          type: string
+        startedAt:
+          description: ISO timestamp when the runtime sub-agent started.
+          type: string
+        status:
+          description: Runtime sub-agent status summary. Current runtime writes completed or failed; skipped, running, and unknown are reserved for forward-compatible DAG display.
+          enum:
+          - completed
+          - failed
+          - skipped
+          - running
+          - unknown
+          type: string
+        timeoutMs:
+          description: Configured timeout in milliseconds when the failure was timeout-related.
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - key
+      - status
+      - attempts
+      type: object
+    PublishGtmEngineerUserNotificationInputBody:
+      additionalProperties: false
+      properties:
+        agentChatId:
+          description: Source-neutral agent conversation id; API-server derives the trusted value from the session when available
+          type: string
+        agentMessageId:
+          description: Source-neutral Mark conversation item id associated with this notification, when available
+          type: string
+        agentUpdateKind:
+          description: Source-neutral raw Mark event or card kind that produced this notification
+          type: string
+        attachLabel:
+          description: Source-provided label for the attach URL when rendered by MCP-backed transports
+          type: string
+        body:
+          description: Human-readable notification body
+          type: string
+        createdAt:
+          description: Notification creation timestamp in RFC3339 format; defaults to the API-server receive time when omitted
+          type: string
+        deliveryStages:
+          description: Optional delivery stages to execute. Omit or send an empty array to preserve delivery through all currently supported channels.
+          items:
+            enum:
+            - browser
+            - messaging
+            - email
+            type: string
+          type: array
+          uniqueItems: true
+        notificationId:
+          description: Unique UUID notification ID used for exact duplicate display suppression
+          format: uuid
+          type: string
+        notificationType:
+          description: Normalized user-notification category, distinct from the raw Mark event kind
+          enum:
+          - needs_attention
+          - permission_required
+          - auth_required
+          - confirmation_required
+          - completed
+          - failed
+          type: string
+        repairId:
+          description: Director automatic repair associated with this notification
+          format: uuid
+          type: string
+        replyable:
+          description: Reserved for backward compatibility. Mark and Agent Director notifications are currently always non-replyable.
+          type: boolean
+        shortSummary:
+          description: Short plain-text notification summary for browser display, capped by the producer at 170 characters
+          type: string
+        summary:
+          description: Plain-text notification summary for email
+          type: string
+        title:
+          description: Human-readable notification title
+          type: string
+      required:
+      - notificationId
+      - notificationType
+      - title
+      - body
+      - createdAt
+      type: object
+    ExternalDirectorOutboundRoute:
+      additionalProperties: false
+      properties:
+        channelId:
+          type: string
+        connectionId:
+          type: string
+        kind:
+          enum:
+          - slack
+          - harness
+          type: string
+        teamId:
+          type: string
+        threadTs:
+          type: string
+      required:
+      - kind
+      type: object
+    StartGtmEngineerAgentViceSessionResponse:
+      additionalProperties: false
+      properties:
+        agentId:
+          description: Agent ID attached to the detached VICE session
+          type: string
+        agentVersion:
+          description: Agent version attached to the detached VICE session
+          format: int64
+          type: integer
+        createdByGtmSessionId:
+          description: GTM Engineer session that requested creation
+          type: string
+        detached:
+          description: Whether the session can continue to operate without a connected user
+          type: boolean
+        origin:
+          description: VICE session origin
+          type: string
+        reusedExistingSession:
+          description: Whether an existing detached VICE session was reused
+          type: boolean
+        sessionId:
+          description: Browser session ID
+          type: string
+        status:
+          description: Browser session status
+          type: string
+        timeoutMinutes:
+          description: Configured session timeout in minutes
+          format: int64
+          type: integer
+        viceUrl:
+          description: VICE websocket URL
+          type: string
+      required:
+      - sessionId
+      - agentId
+      - viceUrl
+      - origin
+      - detached
+      - timeoutMinutes
+      - status
+      - reusedExistingSession
+      - createdByGtmSessionId
+      type: object
+    ValidateFrontendAuthFromGtmEngineerInputBody:
+      additionalProperties: false
+      properties:
+        token:
+          description: Token to validate
+          type: string
+      required:
+      - token
+      type: object
+    CreateGtmEngineerInputBody:
+      additionalProperties: false
+      properties:
+        config:
+          $ref: '#/components/schemas/GtmEngineerConfig'
+          description: Configuration for the gtm-engineer session
+      type: object
+    SubmitGtmEngineerBillingInputBody:
+      additionalProperties: false
+      properties:
+        aiCostInCents:
+          description: AI cost in cents for this usage record
+          format: float
+          type: number
+        internalId:
+          description: Unique identifier for deduplication
+          type: string
+        source:
+          description: Source label for the usage (e.g. onboarding-agent)
+          type: string
+      required:
+      - internalId
+      - aiCostInCents
+      type: object
+    GtmEngineerStatusResponse:
+      additionalProperties: false
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        endedAt:
+          format: date-time
+          type: string
+        endedReason:
+          type: string
+        id:
+          type: string
+        startedAt:
+          format: date-time
+          type: string
+        status:
+          type: string
+      required:
+      - id
+      - status
+      - createdAt
+      type: object
+    RawAgentInvocationSubagentRunLog:
+      additionalProperties: false
+      properties:
+        error:
+          description: Redacted, truncated error attached to the sub-agent log entry.
+          maxLength: 500
+          type: string
+        level:
+          description: Sub-agent log level.
+          enum:
+          - info
+          - warn
+          - error
+          - debug
+          type: string
+        message:
+          description: Redacted local sub-agent log message.
+          maxLength: 500
+          type: string
+        serializedData:
+          description: Redacted, truncated JSON data attached to the sub-agent log entry.
+          maxLength: 1000
+          type: string
+        timestamp:
+          description: Unix epoch milliseconds when the sub-agent log entry was captured.
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - timestamp
+      - message
+      type: object
+    UpdateGtmEngineerLastActiveRequest:
+      additionalProperties: false
+      properties:
+        avariceData:
+          $ref: '#/components/schemas/AvariceKeepaliveData'
+          description: Optional Avarice build metadata associated with the keepalive.
+        source:
+          description: Optional source of this keepalive.
+          type: string
+      type: object
+    GetGtmEngineerAgentInvocationActivityBody:
+      additionalProperties: false
+      properties:
+        hasMore:
+          description: Whether more activity exists in the lookback window beyond this page.
+          type: boolean
+        invocations:
+          description: Recent invocations for agents in this assistant mode's agent set.
+          items:
+            $ref: '#/components/schemas/RawAgentInvocationWithAgentData'
+          type:
+          - array
+          - 'null'
+        lookbackFrom:
+          description: Beginning of the activity lookback window.
+          format: date-time
+          type: string
+        lookbackThrough:
+          description: End of the activity lookback window.
+          format: date-time
+          type: string
+        previousMarkSessionAt:
+          description: Most recent previous GTM Engineer session activity timestamp for this user.
+          format: date-time
+          type: string
+        processedFrom:
+          description: Backward-compatible alias for lookbackFrom.
+          format: date-time
+          type: string
+        processedThrough:
+          description: Maximum activity timestamp included in this response.
+          format: date-time
+          type: string
+      required:
+      - invocations
+      - hasMore
+      type: object
+    CallbackConfig:
+      additionalProperties: false
+      properties:
+        headers:
+          additionalProperties:
+            type: string
+          type: object
+        url:
+          type: string
+      required:
+      - url
+      type: object
+    GtmEngineerResourceFile:
+      additionalProperties: false
+      properties:
+        downloadUrl:
+          description: Signed URL for downloading the resource file
+          type: string
+        fileId:
+          description: ID of the uploaded resource file
+          format: uuid
+          type: string
+        fileName:
+          description: Name of the uploaded resource file
+          type: string
+        fileSizeBytes:
+          description: Size of the uploaded resource file in bytes
+          format: int64
+          type: integer
+        status:
+          description: Status of the uploaded resource file
+          enum:
+          - available
+          - uploading
+          - upload_failed
+          - deleted
+          type: string
+        uploadUrl:
+          description: Signed URL for uploading the resource file
+          type: string
+      required:
+      - fileId
+      - fileName
+      - fileSizeBytes
+      - status
+      type: object
+    GetGtmEngineerRecoverableAvariceWorkBody:
+      additionalProperties: false
+      properties:
+        work:
+          description: Current-draft Avarice work recoverable by this assistant mode.
+          items:
+            $ref: '#/components/schemas/RecoverableAvariceWorkData'
+          type:
+          - array
+          - 'null'
+      required:
+      - work
+      type: object
+    CheckGtmEngineerCreditsInputBody:
+      additionalProperties: false
+      properties:
+        modelCostInCents:
+          description: Cumulative model cost for this Mark process, in cents
+          format: float
+          minimum: 0
+          type: number
+      required:
+      - modelCostInCents
+      type: object
+    StartGtmEngineerAgentViceSessionRequest:
+      additionalProperties: false
+      properties:
+        initialPrompt:
+          description: Optional prompt reserved for the detached VICE bootstrap step.
+          type: string
+        timeoutMinutes:
+          description: Detached VICE idle timeout in minutes. Defaults to GTM_ENGINEER_DETACHED_VICE_TIMEOUT_MINUTES.
+          format: int64
+          maximum: 1440
+          minimum: 1
+          type: integer
+      type: object
+    GetGtmEngineerAssetUploadUrlBody:
+      additionalProperties: false
+      properties:
+        traceUrl:
+          description: Presigned URL to upload the session trace file to
+          type: string
+        url:
+          description: Presigned URL to upload the session assets to
+          type: string
+      required:
+      - url
+      - traceUrl
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

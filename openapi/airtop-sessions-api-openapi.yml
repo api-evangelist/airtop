@@ -1,225 +1,1163 @@
 openapi: 3.2.0
 info:
-  title: Airtop Sessions API
-  description: REST API for Airtop, a cloud-browser platform for AI agents. Create and manage remote Chromium browser sessions, open and navigate windows, drive pages with natural-language interactions (click, type, hover, scroll), query and extract page content with AI, capture screenshots, and persist state with profiles. All requests are authenticated with a Bearer API key.
-  termsOfService: https://www.airtop.ai/legal/terms-of-service
-  contact:
-    name: Airtop Support
-    url: https://docs.airtop.ai
-  version: '1.0'
+  title: Browser Control Sessions API
+  version: 1.0.0
 servers:
-- url: https://api.airtop.ai/api/v1
-  description: Airtop production API
+- url: https://api.airtop.ai/api
 security:
-- bearerAuth: []
+- BearerAuth: []
 tags:
 - name: Sessions
-  description: Create and manage cloud browser sessions.
 paths:
-  /sessions:
+  /v1/sessions:
     get:
-      operationId: listSessions
-      tags:
-      - Sessions
-      summary: List sessions
-      description: Returns the cloud browser sessions for the authenticated account.
+      description: Get a paginated list of sessions filtered by ID or status
+      operationId: sessions-list
       parameters:
-      - name: offset
+      - description: A comma-separated list of IDs of the sessions to retrieve.
+        example:
+        - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        - e39522ce-44f0-456f-9efd-07b3d4fdd9f2
+        explode: true
         in: query
-        required: false
+        name: sessionIds
         schema:
-          type: integer
-      - name: limit
+          description: A comma-separated list of IDs of the sessions to retrieve.
+          examples:
+          - - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+            - e39522ce-44f0-456f-9efd-07b3d4fdd9f2
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+      - description: Status of the session to get.
+        example: running
+        explode: false
         in: query
-        required: false
+        name: status
         schema:
-          type: integer
-      - name: status
-        in: query
-        required: false
-        schema:
+          description: Status of the session to get.
+          enum:
+          - awaitingCapacity
+          - initializing
+          - running
+          - ended
+          - completed
+          - cancelled
+          - all
+          examples:
+          - running
           type: string
+      - description: Offset for pagination.
+        example: 1
+        explode: false
+        in: query
+        name: offset
+        schema:
+          default: -1
+          description: Offset for pagination.
+          examples:
+          - 1
+          format: int64
+          type: integer
+      - description: Limit for pagination.
+        example: 10
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 10
+          description: Limit for pagination.
+          examples:
+          - 10
+          format: int64
+          type: integer
       responses:
         '200':
-          description: A list of sessions.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SessionsListResponse'
-    post:
-      operationId: createSession
+                $ref: '#/components/schemas/SessionsResponse'
+                description: List of sessions.
+          description: OK
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unprocessable Entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Internal Server Error
+      summary: Get a list of sessions
       tags:
       - Sessions
-      summary: Create session
-      description: Starts a new cloud browser session (a remote Chromium instance) with optional profile, proxy, recording, captcha solving, and idle timeout configuration. Returns connection URLs (CDP and WebDriver) for the live session.
+      x-fern-audiences:
+      - public
+    post:
+      operationId: sessions-create
       requestBody:
-        required: false
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SessionConfig'
+              $ref: '#/components/schemas/SessionRestInputV1'
+              description: Session
       responses:
-        '200':
-          description: The created session.
+        '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SessionResponse'
-  /sessions/{sessionId}:
-    get:
-      operationId: getSession
+                description: Session data.
+          description: Created
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create a session
       tags:
       - Sessions
-      summary: Get session info
-      description: Returns details and status for a single session.
-      parameters:
-      - $ref: '#/components/parameters/SessionId'
-      responses:
-        '200':
-          description: The session.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SessionResponse'
+      x-fern-audiences:
+      - public
+  /v1/sessions/{id}:
     delete:
-      operationId: terminateSession
-      tags:
-      - Sessions
-      summary: Terminate session
-      description: Ends a session and releases its cloud browser resources.
+      description: Ends a session by ID. If a given session id does not exist within the organization, it is ignored.
+      operationId: sessions-terminate
       parameters:
-      - $ref: '#/components/parameters/SessionId'
-      responses:
-        '200':
-          description: Session terminated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnvelopeResponse'
-  /requests/{requestId}:
-    get:
-      operationId: getRequestStatus
-      tags:
-      - Sessions
-      summary: Get request status
-      description: Returns the status and result of an asynchronous request previously issued against the API.
-      parameters:
-      - name: requestId
+      - description: ID of the session to delete.
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
         in: path
+        name: id
         required: true
         schema:
+          description: ID of the session to delete.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
           type: string
       responses:
-        '200':
-          description: The request status.
+        '204':
+          description: No Content
+        default:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnvelopeResponse'
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Ends a session
+      tags:
+      - Sessions
+      x-fern-audiences:
+      - public
+    get:
+      description: Get a session by ID
+      operationId: sessions-get-info
+      parameters:
+      - description: Id of the session to get
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Id of the session to get
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+                description: Session data.
+          description: OK
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unprocessable Entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Internal Server Error
+      summary: Get info for a session
+      tags:
+      - Sessions
+      x-fern-audiences:
+      - public
+  /v1/sessions/{id}/events:
+    get:
+      description: Get a session event stream for a given session ID
+      operationId: sessions-events
+      parameters:
+      - description: last known event id
+        example: 0
+        explode: false
+        in: query
+        name: lastEventId
+        schema:
+          default: -1
+          description: last known event id
+          examples:
+          - 0
+          format: int64
+          type: integer
+      - description: Get all events
+        example: true
+        explode: false
+        in: query
+        name: all
+        schema:
+          default: false
+          description: Get all events
+          examples:
+          - true
+          type: boolean
+      - description: Stream events in reverse order (newest to oldest)
+        example: true
+        explode: false
+        in: query
+        name: reverse
+        schema:
+          default: false
+          description: Stream events in reverse order (newest to oldest)
+          examples:
+          - true
+          type: boolean
+      - description: ID of the session to get status info for
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: ID of the session to get status info for
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          type: string
+      responses:
+        '200':
+          content:
+            text/event-stream:
+              schema:
+                description: Each oneOf object in the array represents one possible Server Sent Events (SSE) message, serialized as UTF-8 text according to the SSE specification.
+                oneOf:
+                - properties:
+                    data:
+                      $ref: '#/components/schemas/CaptchaEventMessage'
+                    event:
+                      const: captchaEvent
+                      description: The event name.
+                      type: string
+                    id:
+                      description: The event ID.
+                      type: integer
+                    retry:
+                      description: The retry time in milliseconds.
+                      type: integer
+                  required:
+                  - data
+                  - event
+                  title: Event captchaEvent
+                  type: object
+                - properties:
+                    data:
+                      $ref: '#/components/schemas/ErrorMessage'
+                    event:
+                      const: error
+                      description: The event name.
+                      type: string
+                    id:
+                      description: The event ID.
+                      type: integer
+                    retry:
+                      description: The retry time in milliseconds.
+                      type: integer
+                  required:
+                  - data
+                  - event
+                  title: Event error
+                  type: object
+                - properties:
+                    data:
+                      $ref: '#/components/schemas/FileEventMessage'
+                    event:
+                      const: fileEvent
+                      description: The event name.
+                      type: string
+                    id:
+                      description: The event ID.
+                      type: integer
+                    retry:
+                      description: The retry time in milliseconds.
+                      type: integer
+                  required:
+                  - data
+                  - event
+                  title: Event fileEvent
+                  type: object
+                - properties:
+                    data:
+                      $ref: '#/components/schemas/SessionEventMessage'
+                    event:
+                      const: sessionEvent
+                      description: The event name.
+                      type: string
+                    id:
+                      description: The event ID.
+                      type: integer
+                    retry:
+                      description: The retry time in milliseconds.
+                      type: integer
+                  required:
+                  - data
+                  - event
+                  title: Event sessionEvent
+                  type: object
+                - properties:
+                    data:
+                      $ref: '#/components/schemas/StatusMessage'
+                    event:
+                      const: status
+                      description: The event name.
+                      type: string
+                    id:
+                      description: The event ID.
+                      type: integer
+                    retry:
+                      description: The retry time in milliseconds.
+                      type: integer
+                  required:
+                  - data
+                  - event
+                  title: Event status
+                  type: object
+                - properties:
+                    data:
+                      $ref: '#/components/schemas/WindowEventMessage'
+                    event:
+                      const: windowEvent
+                      description: The event name.
+                      type: string
+                    id:
+                      description: The event ID.
+                      type: integer
+                    retry:
+                      description: The retry time in milliseconds.
+                      type: integer
+                  required:
+                  - data
+                  - event
+                  title: Event windowEvent
+                  type: object
+                title: Server Sent Events
+                type: object
+          description: OK
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unprocessable Entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Internal Server Error
+      summary: Get a session event stream
+      tags:
+      - Sessions
+      x-fern-audiences:
+      - beta
+      - sdk_public
+      x-fern-streaming:
+        format: sse
+  /v1/sessions/{id}/last-active:
+    post:
+      description: Updates the last active time for a session
+      operationId: updateSessionLastActive
+      parameters:
+      - description: ID of the session to update.
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: ID of the session to update.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          type: string
+      responses:
+        '200':
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Update session last active
+      tags:
+      - Sessions
+      x-fern-audiences:
+      - alpha
+  /v1/sessions/{sessionId}/save-profile-on-termination/{profileName}:
+    put:
+      operationId: save-profile-on-termination
+      parameters:
+      - description: ID of the session.
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: sessionId
+        required: true
+        schema:
+          description: ID of the session.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      - description: Name under which to save the profile.
+        example: myProfile
+        in: path
+        name: profileName
+        required: true
+        schema:
+          description: Name under which to save the profile.
+          examples:
+          - myProfile
+          maxLength: 128
+          minLength: 1
+          pattern: ^[a-zA-Z0-9-]+$
+          patternDescription: alphanumeric with hyphen
+          type: string
+      responses:
+        '204':
+          description: No Content
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Save profile on termination
+      tags:
+      - Sessions
+      x-fern-audiences:
+      - public
 components:
   schemas:
-    SessionsListResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-            properties:
-              sessions:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Session'
-    Envelope:
-      type: object
+    WindowEventMessage:
+      additionalProperties: false
       properties:
-        meta:
-          type: object
-          properties:
-            requestId:
-              type: string
-            status:
-              type: string
-        errors:
-          type: array
-          items:
-            type: object
-        warnings:
-          type: array
-          items:
-            type: object
-    Session:
-      type: object
-      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+          description: Error message
+        event:
+          description: Event name
+          type: string
+        eventData:
+          description: Data of the event
+        eventId:
+          description: Event ID
+          format: int64
+          type: integer
+        eventTime:
+          description: Date and Time of the event
+          format: date-time
+          type: string
         id:
+          description: ID of the session
+          type: string
+        windowId:
+          description: Window ID
+          type: string
+      required:
+      - windowId
+      - event
+      - id
+      - eventTime
+      type: object
+    VibeCodingConfig:
+      additionalProperties: false
+      properties:
+        avariceEnabled:
+          description: '-'
+          type: boolean
+        createdByGtmSessionId:
+          description: '-'
+          type: string
+        createdBySelfHealingInvocationId:
+          description: '-'
+          type: string
+        detached:
+          default: false
+          description: Whether the session can continue to operate without a connected user.
+          type: boolean
+        enabled:
+          description: '-'
+          type: boolean
+        origin:
+          default: portal
+          description: '-'
+          type: string
+        sourceViceS3Id:
+          description: '-'
+          format: int64
+          type: integer
+        terminateExisting:
+          description: '-'
+          type: boolean
+      type: object
+    SessionsWithPagination:
+      additionalProperties: false
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+          description: Pagination details.
+        sessions:
+          description: List of sessions.
+          items:
+            $ref: '#/components/schemas/ExternalSessionWithConnectionInfo'
+          type:
+          - array
+          - 'null'
+      required:
+      - sessions
+      - pagination
+      type: object
+    ErrorMessage:
+      additionalProperties: false
+      properties:
+        code:
+          description: Error code
+          type: string
+        event:
+          description: Event name
+          type: string
+        message:
+          description: Error message
+          type: string
+      required:
+      - event
+      - message
+      - code
+      type: object
+    SessionResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/ExternalSessionWithConnectionInfo'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/EnvelopeDefaultMeta'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    EnvelopeDefaultMeta:
+      additionalProperties: false
+      properties:
+        requestId:
+          type: string
+      type: object
+    Pagination:
+      additionalProperties: false
+      properties:
+        currentLimit:
+          description: The number of items to return
+          format: int64
+          type: integer
+        currentPage:
+          description: The current page number
+          format: int64
+          type: integer
+        finalCount:
+          description: The final count of items displayed on the current page
+          format: int64
+          type: integer
+        hasMore:
+          description: Whether there are more items
+          type: boolean
+        initialCount:
+          description: The initial count of items displayed on the current page
+          format: int64
+          type: integer
+        nextOffset:
+          description: The number of items to skip
+          format: int64
+          type: integer
+        numberOfPages:
+          description: The total number of pages
+          format: int64
+          type: integer
+        totalItems:
+          description: The total number of items
+          format: int64
+          type: integer
+      required:
+      - currentLimit
+      - currentPage
+      - finalCount
+      - hasMore
+      - initialCount
+      - nextOffset
+      - numberOfPages
+      - totalItems
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    StatusMessage:
+      additionalProperties: false
+      properties:
+        event:
+          description: Event name
+          type: string
+        eventId:
+          description: Event ID
+          format: int64
+          type: integer
+        eventTime:
+          description: Date and Time of the event
+          format: date-time
+          type: string
+        id:
+          description: ID of the session
           type: string
         status:
+          description: Status of the session
+          enum:
+          - awaitingCapacity
+          - initializing
+          - running
+          - ended
+          - error
+          - disconnected
           type: string
-        cdpWsUrl:
-          type: string
-          description: Chrome DevTools Protocol WebSocket URL for the session.
-        cdpUrl:
-          type: string
-        webDriverUrl:
-          type: string
-        profileName:
-          type: string
-    EnvelopeResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            type: object
-    SessionConfig:
+      required:
+      - event
+      - id
+      - status
+      - eventTime
       type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    FileEventData:
+      additionalProperties: false
+      properties:
+        error:
+          type: string
+        filePath:
+          type: string
+      required:
+      - filePath
+      - error
+      type: object
+    SessionConfigV1:
+      additionalProperties: false
+      properties:
+        agentId:
+          description: Agent ID for agent execution mode.
+          type: string
+          x-fern-audiences:
+          - private
+        agentVersion:
+          description: Agent version for agent execution mode.
+          format: int64
+          type: integer
+          x-fern-audiences:
+          - private
+        baseProfileId:
+          deprecated: true
+          description: 'Deprecated: Use profileName instead.'
+          examples:
+          - a13c6f73-bd89-4a76-ab32-5a6c422e8224
+          type: string
+          x-fern-audiences:
+          - public
+        extensionIds:
+          description: Google Web Store extension IDs to be loaded into the session.
+          items:
+            type: string
+          type:
+          - array
+          - 'null'
+          x-fern-audiences:
+          - public
+        persistProfile:
+          deprecated: true
+          description: 'Deprecated: use Save Profile On Termination API instead.'
+          examples:
+          - true
+          type: boolean
+          x-fern-audiences:
+          - public
+        profileName:
+          description: Name of a profile to load into the session.
+          examples:
+          - a13c6f73-bd89-4a76-ab32-5a6c422e8224
+          type: string
+          x-fern-audiences:
+          - public
+        proxy:
+          description: Proxy configuration.
+          oneOf:
+          - description: Use Airtop-provided proxy.
+            type: boolean
+          - description: Configuration for a single custom proxy.
+            oneOf:
+            - description: Url of the proxy. Or `default` to use Airtop-provided proxy.
+              title: Proxy URL
+              type: string
+            - additionalProperties: false
+              properties:
+                country:
+                  default: US
+                  description: Country to exit from, in [ISO 3166-1 alpha-2 format](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). Or `global` to get IP addresses from random countries. We do not guarantee an available proxy in all countries.
+                  type: string
+                sticky:
+                  default: true
+                  description: Try to maintain the same IP address for the duration for up to a maximum of 30 minutes. `true` by default. <Note>Stickiness is on a best-effort basis; we cannot guarantee that the same IP address will be available for 30 minutes at a time.</Note>
+                  type: boolean
+              title: AirtopProxyConfiguration
+              type: object
+            - description: Proxy object with url of the proxy as a parameter. Takes optional username and password.
+              properties:
+                password:
+                  type: string
+                url:
+                  type: string
+                username:
+                  type: string
+              required:
+              - url
+              title: ProxyCredentials
+              type: object
+            title: Proxy
+          - description: You can set multiple proxies. You associate each proxy with a domain pattern. If the domain matches the pattern, the proxy is used. Pattern can contain `?` to match any single character and / or `*` to match any sequence of characters. For example, `*.example.com` will match `www.example.com` and `sub.example.com`.
+            items:
+              properties:
+                domainPattern:
+                  type: string
+                relay:
+                  description: Configuration for a single custom proxy.
+                  oneOf:
+                  - description: Url of the proxy. Or `default` to use Airtop-provided proxy.
+                    title: Proxy URL
+                    type: string
+                  - additionalProperties: false
+                    properties:
+                      country:
+                        default: US
+                        description: Country to exit from, in [ISO 3166-1 alpha-2 format](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2). Or `global` to get IP addresses from random countries. We do not guarantee an available proxy in all countries.
+                        type: string
+                      sticky:
+                        default: true
+                        description: Try to maintain the same IP address for the duration for up to a maximum of 30 minutes. `true` by default. <Note>Stickiness is on a best-effort basis; we cannot guarantee that the same IP address will be available for 30 minutes at a time.</Note>
+                        type: boolean
+                    title: AirtopProxyConfiguration
+                    type: object
+                  - description: Proxy object with url of the proxy as a parameter. Takes optional username and password.
+                    properties:
+                      password:
+                        type: string
+                      url:
+                        type: string
+                      username:
+                        type: string
+                    required:
+                    - url
+                    title: ProxyCredentials
+                    type: object
+                  title: Proxy
+              required:
+              - domainPattern
+              - relay
+              title: ProxyConfigurationKind
+              type: object
+            title: ProxyConfigurationItem
+            type: array
+          x-fern-audiences:
+          - public
+        record:
+          description: Enable session recording.
+          type: boolean
+          x-fern-audiences:
+          - public
+        solveCaptcha:
+          description: Automatically solve captcha challenges.
+          type: boolean
+          x-fern-audiences:
+          - public
+        timeoutMinutes:
+          default: 10
+          description: Number of minutes of inactivity (idle timeout) after which the session will terminate. The idle timeout is reset when a user makes an incoming HTTP request, AI request, or new WebSocket connection to the session. Thus, when using drivers like Puppeteer, Selenium or Playwright, the timeout reset depends on the nature of the driver request. If not specified, defaults to 10 minutes.
+          examples:
+          - 10
+          format: int
+          maximum: 10080
+          minimum: 1
+          type: integer
+          x-fern-audiences:
+          - public
+        vibeCodingConfig:
+          $ref: '#/components/schemas/VibeCodingConfig'
+          description: '-'
+          x-fern-audiences:
+          - private
+      type: object
+    ErrorBody:
+      additionalProperties: false
+      properties:
+        code:
+          description: Error code
+          type: string
+        message:
+          description: Error message
+          type: string
+      required:
+      - message
+      - code
+      type: object
+    SessionEventMessage:
+      additionalProperties: false
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorBody'
+          description: Error message
+        event:
+          description: Event name
+          type: string
+        eventData:
+          description: Data of the event
+        eventId:
+          description: Event ID
+          format: int64
+          type: integer
+        eventTime:
+          description: Date and Time of the event
+          format: date-time
+          type: string
+        id:
+          description: ID of the session
+          type: string
+      required:
+      - event
+      - id
+      - eventTime
+      type: object
+    SessionRestInputV1:
+      additionalProperties: false
       properties:
         configuration:
-          type: object
-          properties:
-            profileName:
-              type: string
-              description: Name of a profile to load into the session.
-            extensionIds:
-              type: array
-              items:
-                type: string
-              description: Chrome Web Store extension IDs to load.
-            proxy:
-              description: Proxy configuration (boolean, object, or array).
-              oneOf:
-              - type: boolean
-              - type: object
-              - type: array
-                items:
-                  type: object
-            record:
-              type: boolean
-              description: Enable session recording.
-            solveCaptcha:
-              type: boolean
-              description: Automatically solve captcha challenges.
-            timeoutMinutes:
-              type: integer
-              default: 10
-              description: Idle timeout in minutes before the session ends.
-    SessionResponse:
-      allOf:
-      - $ref: '#/components/schemas/Envelope'
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/Session'
-  parameters:
-    SessionId:
-      name: sessionId
-      in: path
-      required: true
-      description: Identifier of the cloud browser session.
-      schema:
-        type: string
+          $ref: '#/components/schemas/SessionConfigV1'
+          description: Session configuration
+      type: object
+    CaptchaEventMessage:
+      additionalProperties: false
+      properties:
+        duration:
+          description: Time taken to solve the CAPTCHA (in milliseconds).
+          format: int64
+          type: integer
+        error:
+          description: Error message when status is 'failed'
+          type: string
+        event:
+          description: Event name
+          type: string
+        eventTime:
+          description: Date and Time of the event
+          format: date-time
+          type: string
+        id:
+          description: CAPTCHA job ID
+          type: string
+        retryCount:
+          description: Retry count
+          format: int64
+          type: integer
+        sessionId:
+          description: Session ID
+          type: string
+        status:
+          description: CAPTCHA solving status
+          enum:
+          - detected
+          - processing
+          - completed
+          - failed
+          type: string
+        type:
+          description: CAPTCHA type
+          type: string
+        url:
+          description: URL of the page containing the CAPTCHA challenge.
+          type: string
+        windowId:
+          description: Window ID
+          type: string
+      required:
+      - event
+      - id
+      - sessionId
+      - windowId
+      - type
+      - url
+      - retryCount
+      - status
+      - duration
+      - eventTime
+      type: object
+    FileEventMessage:
+      additionalProperties: false
+      properties:
+        downloadUrl:
+          description: Download URL
+          type: string
+        event:
+          description: Event name
+          type: string
+        eventData:
+          $ref: '#/components/schemas/FileEventData'
+          description: Additional data for the event
+        eventTime:
+          description: Date and Time of the event
+          format: date-time
+          type: string
+        fileId:
+          description: File ID
+          type: string
+        name:
+          description: File name
+          type: string
+        status:
+          description: Status of the file
+          enum:
+          - available
+          - uploading
+          - upload_failed
+          - deleted
+          type: string
+        type:
+          description: 'File type. Not MIME type or extension. Examples: ''screenshot'', ''recording'', ''archive'''
+          type: string
+      required:
+      - event
+      - fileId
+      - downloadUrl
+      - status
+      - eventTime
+      type: object
+    SessionsResponse:
+      additionalProperties: false
+      properties:
+        data:
+          $ref: '#/components/schemas/SessionsWithPagination'
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        meta:
+          $ref: '#/components/schemas/EnvelopeDefaultMeta'
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    ExternalSessionConfig:
+      additionalProperties: false
+      properties:
+        baseProfileId:
+          description: Id of a profile to load into the session.
+          examples:
+          - a13c6f73-bd89-4a76-ab32-5a6c422e8224
+          type: string
+        persistProfile:
+          description: Persist the profile.
+          examples:
+          - true
+          type: boolean
+        record:
+          description: Whether session recording is enabled.
+          type: boolean
+        recordingState:
+          description: 'Why recording is in its current state: enabled, manually_disabled, or free_plan_disabled.'
+          type: string
+        timeoutMinutes:
+          default: 10
+          description: Max length of session in minutes, after which it will terminate if not already deleted.
+          examples:
+          - 10
+          format: int
+          maximum: 1440
+          minimum: 1
+          type: integer
+      type: object
+    ExternalSessionWithConnectionInfo:
+      additionalProperties: false
+      properties:
+        cdpUrl:
+          description: 'Url to connect to chrome devtools protocol port on the Airtop browser. Include the header ''Authorization: Bearer <api-key>.'''
+          type: string
+        cdpWsUrl:
+          description: 'Websocket url to connect to the Airtop browser for CDP-based automation frameworks (e.g. Puppeteer or Playwright). Include the header ''Authorization: Bearer <airtop-api-key>.'''
+          type: string
+        chromedriverUrl:
+          description: 'Websocket url to connect to the Airtop browser for webdriver-based automation frameworks (e.g. Selenium). Include the header ''Authorization: Bearer <airtop-api-key>.'''
+          type: string
+        configuration:
+          $ref: '#/components/schemas/ExternalSessionConfig'
+          deprecated: true
+          description: Session configuration details. DEPRECATED
+        currentUsage:
+          description: Current usage in minutes.
+          format: int64
+          type: integer
+        dateCreated:
+          description: Date the session was created.
+          format: date-time
+          type: string
+        detached:
+          description: Whether the session can continue to operate without a connected user.
+          type: boolean
+        id:
+          description: Id of the session.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+        lastActivity:
+          description: Date of the last activity.
+          format: date-time
+          type: string
+        profileId:
+          deprecated: true
+          description: 'Id of a newly persisted profile. DEPRECATED: Use profileName.'
+          examples:
+          - 427c6f73-bd89-4a76-ab32-5a6c422e8b0b
+          type: string
+        status:
+          description: Session status.
+          examples:
+          - active
+          type: string
+        viceUrl:
+          description: '-'
+          type: string
+      required:
+      - id
+      - status
+      - configuration
+      type: object
   securitySchemes:
-    bearerAuth:
-      type: http
+    BearerAuth:
       scheme: bearer
-      description: 'Airtop API key supplied as a Bearer token in the Authorization header: `Authorization: Bearer YOUR_API_KEY`.'
+      type: http
+      x-fern-bearer:
+        name: apiKey

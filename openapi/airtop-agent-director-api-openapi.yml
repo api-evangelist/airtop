@@ -1,0 +1,206 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Agent Director API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Agent Director
+paths:
+  /v1/agent-director/messages:
+    get:
+      description: Returns the latest externally visible messages from the active Agent Director runtime. This is best-effort active-session history, not durable delivery or task-isolated output.
+      operationId: agent-director-harness-messages-get
+      parameters:
+      - description: Maximum number of latest externally visible Director messages to return; values above 100 are capped
+        explode: false
+        in: query
+        name: limit
+        schema:
+          default: 50
+          description: Maximum number of latest externally visible Director messages to return; values above 100 are capped
+          format: int64
+          minimum: 1
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetExternalDirectorHarnessMessagesResponse'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Get recent Agent Director messages
+      tags:
+      - Agent Director
+      x-fern-audiences:
+      - beta
+      - sdk_public
+    post:
+      description: Accepts a text message into Agent Director's asynchronous FIFO/session pipeline. Acceptance does not mean Director completed the work.
+      operationId: agent-director-harness-message-submit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitExternalDirectorHarnessMessageInputBody'
+        required: true
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitExternalDirectorHarnessMessageResponse'
+          description: Accepted
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Submit a coding harness message to Agent Director
+      tags:
+      - Agent Director
+      x-fern-audiences:
+      - beta
+      - sdk_public
+components:
+  schemas:
+    SubmitExternalDirectorHarnessMessageResponse:
+      additionalProperties: false
+      properties:
+        result:
+          description: Asynchronous pipeline acceptance result
+          enum:
+          - accepted
+          - already_accepted
+          type: string
+      required:
+      - result
+      type: object
+    GetExternalDirectorHarnessMessagesResponse:
+      additionalProperties: false
+      properties:
+        messages:
+          description: Latest externally visible Director messages in deterministic chronological order
+          items:
+            $ref: '#/components/schemas/ExternalDirectorHarnessMessage'
+          type: array
+        sessionId:
+          description: Active Agent Director session ID, or null when no session is active
+          type:
+          - string
+          - 'null'
+      required:
+      - sessionId
+      - messages
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    ExternalDirectorHarnessMessage:
+      additionalProperties: false
+      properties:
+        createdAt:
+          description: Conversation item creation time
+          format: date-time
+          type: string
+        messageId:
+          description: Director conversation item ID
+          type: string
+        text:
+          description: Current plain-text content for this conversation item
+          type: string
+      required:
+      - messageId
+      - text
+      - createdAt
+      type: object
+    SubmitExternalDirectorHarnessMessageInputBody:
+      additionalProperties: false
+      properties:
+        messageId:
+          description: Caller-generated stable idempotency key; reuse it after an ambiguous retry (UUID recommended)
+          maxLength: 96
+          minLength: 1
+          type: string
+        text:
+          description: Free-form message for Director; the encoded message envelope must not exceed 256 KiB
+          maxLength: 100000
+          minLength: 1
+          type: string
+      required:
+      - messageId
+      - text
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

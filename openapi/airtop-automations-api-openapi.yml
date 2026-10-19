@@ -1,0 +1,326 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Automations API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Automations
+paths:
+  /v1/automations:
+    get:
+      description: List all automations for a given organization
+      operationId: automations-list
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListAutomationsOutput'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: List Automations
+      tags:
+      - Automations
+      x-fern-audiences:
+      - public
+  /v1/automations/description:
+    put:
+      description: Update the description of a specific automation
+      operationId: automations-update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAutomationDescriptionInputBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationOutput'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unprocessable Entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Internal Server Error
+      summary: Update Automation Description
+      tags:
+      - Automations
+      x-fern-audiences:
+      - public
+  /v1/automations/{automationId}:
+    delete:
+      description: Delete a specific automation
+      operationId: automations-delete
+      parameters:
+      - description: ID of the automation to delete
+        in: path
+        name: automationId
+        required: true
+        schema:
+          description: ID of the automation to delete
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAutomationOutputWrapperBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unprocessable Entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Internal Server Error
+      summary: Delete Automation
+      tags:
+      - Automations
+      x-fern-audiences:
+      - public
+    get:
+      description: Get a specific automation by ID
+      operationId: automations-get
+      parameters:
+      - description: ID of the automation to retrieve
+        in: path
+        name: automationId
+        required: true
+        schema:
+          description: ID of the automation to retrieve
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AutomationOutput'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Not Found
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Unprocessable Entity
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Internal Server Error
+      summary: Get Automation
+      tags:
+      - Automations
+      x-fern-audiences:
+      - public
+components:
+  schemas:
+    ListAutomationsOutput:
+      additionalProperties: false
+      properties:
+        automations:
+          items:
+            $ref: '#/components/schemas/AutomationOutput'
+          type:
+          - array
+          - 'null'
+      required:
+      - automations
+      type: object
+    DeleteAutomationOutputWrapperBody:
+      additionalProperties: false
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    AutomationOutput:
+      additionalProperties: false
+      properties:
+        description:
+          type: string
+        domainName:
+          type: string
+        id:
+          type: string
+        schema:
+          type: string
+        template:
+          type: string
+      required:
+      - id
+      - domainName
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    UpdateAutomationDescriptionInputBody:
+      additionalProperties: false
+      properties:
+        description:
+          description: New description for the automation
+          type: string
+        id:
+          description: ID of the automation to update
+          type: string
+        orgId:
+          description: Organization ID
+          type: string
+      required:
+      - id
+      - orgId
+      - description
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey

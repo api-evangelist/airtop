@@ -1,0 +1,343 @@
+openapi: 3.2.0
+info:
+  title: Browser Control Agent Folders API
+  version: 1.0.0
+servers:
+- url: https://api.airtop.ai/api
+security:
+- BearerAuth: []
+tags:
+- name: Agent Folders
+paths:
+  /v2/agent-folders:
+    get:
+      description: Get all agent folders for the authenticated user
+      operationId: agent-folders-list
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAgentFoldersOutputBody'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: List agent folders
+      tags:
+      - Agent Folders
+    post:
+      description: Create a new agent folder for organizing agents
+      operationId: agent-folder-create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentFolderInputBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentFolder'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Create agent folder
+      tags:
+      - Agent Folders
+  /v2/agent-folders/{id}:
+    delete:
+      description: Delete an agent folder. Agents in this folder will become uncategorized.
+      operationId: agent-folder-delete
+      parameters:
+      - description: Folder ID
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Folder ID
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      responses:
+        '204':
+          description: No Content
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Delete agent folder
+      tags:
+      - Agent Folders
+    patch:
+      description: Update an existing agent folder's name or sort order
+      operationId: agent-folder-update
+      parameters:
+      - description: Folder ID
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Folder ID
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgentFolderInputBody'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentFolder'
+          description: OK
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Update agent folder
+      tags:
+      - Agent Folders
+  /v2/agents/{id}/folder:
+    post:
+      description: Move an agent to a folder, or set folderId to null to make it uncategorized
+      operationId: agent-move-to-folder
+      parameters:
+      - description: Agent ID
+        example: 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+        in: path
+        name: id
+        required: true
+        schema:
+          description: Agent ID
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveAgentToFolderInputBody'
+        required: true
+      responses:
+        '204':
+          description: No Content
+          headers:
+            content-type:
+              schema:
+                type: string
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+          description: Error
+      summary: Move agent to folder
+      tags:
+      - Agent Folders
+components:
+  schemas:
+    CreateAgentFolderInputBody:
+      additionalProperties: false
+      properties:
+        name:
+          description: Folder name
+          examples:
+          - My Folder
+          maxLength: 255
+          minLength: 1
+          type: string
+      required:
+      - name
+      type: object
+    UpdateAgentFolderInputBody:
+      additionalProperties: false
+      properties:
+        name:
+          description: New folder name
+          examples:
+          - My Renamed Folder
+          maxLength: 255
+          minLength: 1
+          type: string
+        sortOrder:
+          description: New sort order
+          examples:
+          - 1
+          format: int64
+          type: integer
+      type: object
+    ErrorEnvelope:
+      additionalProperties: false
+      properties:
+        data: {}
+        errors:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+        httpStatus:
+          format: int64
+          type: integer
+        message:
+          type: string
+        meta: {}
+        warnings:
+          items:
+            $ref: '#/components/schemas/Issue'
+          type:
+          - array
+          - 'null'
+      required:
+      - httpStatus
+      - message
+      - meta
+      - data
+      - errors
+      - warnings
+      type: object
+    GetAgentFoldersOutputBody:
+      additionalProperties: false
+      properties:
+        folders:
+          description: List of folders
+          items:
+            $ref: '#/components/schemas/AgentFolder'
+          type: array
+      required:
+      - folders
+      type: object
+    AgentFolder:
+      additionalProperties: false
+      properties:
+        agentCount:
+          description: Number of agents in this folder
+          format: int64
+          type: integer
+        createdAt:
+          description: When the folder was created
+          format: date-time
+          type: string
+        id:
+          description: Unique identifier for the folder
+          type: string
+        name:
+          description: Name of the folder
+          type: string
+        organizationId:
+          description: Organization ID that owns this folder
+          type: string
+        parentId:
+          description: Parent folder ID for hierarchy (future use)
+          type: string
+        sortOrder:
+          description: Sort order for display
+          format: int64
+          type: integer
+        updatedAt:
+          description: When the folder was last updated
+          format: date-time
+          type: string
+        userId:
+          description: User ID that owns this folder
+          type: string
+      required:
+      - id
+      - organizationId
+      - userId
+      - name
+      - sortOrder
+      - createdAt
+      - updatedAt
+      - agentCount
+      type: object
+    Issue:
+      additionalProperties: false
+      properties:
+        code:
+          description: Issue code.
+          type:
+          - string
+          - 'null'
+        details:
+          additionalProperties: {}
+          description: Any associated details.
+          type:
+          - object
+          - 'null'
+        message:
+          description: Message describing the issue.
+          type: string
+        reason:
+          description: Underlying reason for the issue.
+          type:
+          - string
+          - 'null'
+        value:
+          additionalProperties: {}
+          description: Structured payload describing the issue, for issues that carry one.
+          type:
+          - object
+          - 'null'
+      required:
+      - message
+      type: object
+    MoveAgentToFolderInputBody:
+      additionalProperties: false
+      properties:
+        folderId:
+          description: Target folder ID. Set to null to move to uncategorized.
+          examples:
+          - 6aac6f73-bd89-4a76-ab32-5a6c422e8b0b
+          format: uuid
+          type:
+          - string
+          - 'null'
+      required:
+      - folderId
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-fern-bearer:
+        name: apiKey
