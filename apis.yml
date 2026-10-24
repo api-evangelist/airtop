@@ -233,6 +233,8 @@ apis:
   humanURL: https://docs.airtop.ai/api-reference/airtop-api
   baseURL: https://api.airtop.ai/api/v1
   tags:
+  - Automation
+  tags_raw:
   - Automations
   properties:
   - type: OpenAPI
@@ -263,6 +265,8 @@ apis:
   humanURL: https://docs.airtop.ai/api-reference/airtop-api
   baseURL: https://api.airtop.ai/api/v1
   tags:
+  - Beta
+  tags_raw:
   - beta
   properties:
   - type: OpenAPI
@@ -293,6 +297,8 @@ apis:
   humanURL: https://docs.airtop.ai/api-reference/airtop-api
   baseURL: https://api.airtop.ai/api/v1
   tags:
+  - File
+  tags_raw:
   - files
   properties:
   - type: OpenAPI
