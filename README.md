@@ -1,4 +1,4 @@
-# Airtop (airtop)
+# Airtop
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,158 +66,126 @@
 
 Airtop is a cloud-browser API for AI agents. It runs remote Chromium sessions in the cloud and exposes them through a REST API so agents can open windows, navigate pages, and interact with sites using natural-language instructions - clicking, typing, scraping, and querying pages with AI - without brittle selectors or self-hosted browser infrastructure.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/airtop/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/airtop/refs/heads/main/apis.yml)
+**Areas:** Browser Automation · AI Agents · Cloud Browser · Web Scraping · Headless Chrome
 
-## Tags
+## Airtop on APIs.io
 
-- Browser Automation
-- AI Agents
-- Cloud Browser
-- Web Scraping
-- Headless Chrome
+Everything profiled for Airtop is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/airtop/](https://apis.io/providers/airtop/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (6)
 
-- **Created:** 2026-06-20
-- **Modified:** 2026-06-20
+- [Airtop AI Query API](https://apis.io/apis/airtop/airtop-ai-query-api/) — Query, extract, and scrape page content with AI.
+- [Airtop Page Interaction API](https://apis.io/apis/airtop/airtop-page-interaction-api/) — Drive a page with natural-language click, type, hover, and scroll.
+- [Airtop Profiles API](https://apis.io/apis/airtop/airtop-profiles-api/) — Persist and delete browser profiles.
+- [Airtop Screenshots API](https://apis.io/apis/airtop/airtop-screenshots-api/) — Capture window screenshots.
+- [Airtop Sessions API](https://apis.io/apis/airtop/airtop-sessions-api/) — Create and manage cloud browser sessions.
+- [Airtop Windows API](https://apis.io/apis/airtop/airtop-windows-api/) — Create, navigate, and close browser windows inside a session.
 
-## APIs
+### Published properties
 
-### Airtop Sessions API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Creates and manages cloud browser sessions - remote Chromium instances with optional profiles, proxies, recording, captcha solving, and idle timeouts. Returns CDP and WebDriver connection URLs for the live session.
+#### Agentic access (1)
 
-- **Human URL:** [https://docs.airtop.ai/api-reference/airtop-api](https://docs.airtop.ai/api-reference/airtop-api)
-- **Base URL:** `https://api.airtop.ai/api/v1`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Airtop Agentic Access](https://apis.io/agentic-access/airtop/airtop-agentic-access/)
 
-- Sessions
-- Cloud Browser
-- Lifecycle
+#### Collections (7)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [Documentation](https://docs.airtop.ai/guides/how-to/creating-a-session)
-- [API Reference](https://docs.airtop.ai/api-reference/airtop-api/sessions/create)
-- [OpenAPI](openapi/airtop-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/airtop.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/airtop.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Airtop API](https://apis.io/collections/airtop/open-airtop/)
+- [Airtop AI Query API](https://apis.io/collections/airtop/open-airtop-ai-query-api/)
+- [Airtop AI Query Page Interaction API](https://apis.io/collections/airtop/open-airtop-page-interaction-api/)
+- [Airtop AI Query Profiles API](https://apis.io/collections/airtop/open-airtop-profiles-api/)
+- [Airtop AI Query Screenshots API](https://apis.io/collections/airtop/open-airtop-screenshots-api/)
+- [Airtop AI Query Sessions API](https://apis.io/collections/airtop/open-airtop-sessions-api/)
+- [Airtop AI Query Windows API](https://apis.io/collections/airtop/open-airtop-windows-api/)
 
-### Airtop Windows API
+#### Security (2)
 
-Creates browser windows (tabs) inside a session, loads URLs, reads window info, and closes windows. A window is the unit that pages load into and that page-interaction and AI-query operations act on.
+Authentication, trust centre, and vulnerability disclosure.
 
-- **Human URL:** [https://docs.airtop.ai/api-reference/airtop-api/windows/create](https://docs.airtop.ai/api-reference/airtop-api/windows/create)
-- **Base URL:** `https://api.airtop.ai/api/v1`
+- [Airtop Authentication](https://apis.io/security/airtop/airtop-authentication/)
+- [Airtop Domain Security](https://apis.io/security/airtop/airtop-domain-security/)
 
-#### Tags
+#### Plans and pricing (1)
 
-- Windows
-- Navigation
-- Tabs
+Published plans, tiers and prices.
 
-#### Properties
+- [Airtop Plans Pricing](https://apis.io/plans/airtop/airtop-plans-pricing/)
 
-- [Documentation](https://docs.airtop.ai/api-reference/airtop-api/windows/create)
-- [API Reference](https://docs.airtop.ai/api-reference/airtop-api)
-- [OpenAPI](openapi/airtop-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/airtop.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/airtop.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Rate limits (1)
 
-### Airtop Page Interaction API
+Published request limits.
 
-Drives a page using natural-language element descriptions instead of selectors or XPaths - click, hover, type, and scroll. AI resolves the described element to an on-page target before performing the action.
+- [Airtop Rate Limits](https://apis.io/rate-limits/airtop/airtop-rate-limits/)
 
-- **Human URL:** [https://docs.airtop.ai/guides/how-to/ai/page-interactions](https://docs.airtop.ai/guides/how-to/ai/page-interactions)
-- **Base URL:** `https://api.airtop.ai/api/v1`
+#### FinOps (1)
 
-#### Tags
+What the API costs to run, by operation.
 
-- Page Interaction
-- Click
-- Type
-- Scroll
+- [Airtop Finops](https://apis.io/finops/airtop/airtop-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://docs.airtop.ai/guides/how-to/ai/page-interactions)
-- [API Reference](https://docs.airtop.ai/api-reference/airtop-api/windows/click)
-- [OpenAPI](openapi/airtop-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/airtop.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/airtop.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-### Airtop AI Query and Extraction API
-
-Asks natural-language questions about the current page (page-query), extracts structured data against an optional JSON output schema, follows pagination links for paginated extraction, and scrapes raw page content.
-
-- **Human URL:** [https://docs.airtop.ai/api-reference/airtop-api/windows/page-query](https://docs.airtop.ai/api-reference/airtop-api/windows/page-query)
-- **Base URL:** `https://api.airtop.ai/api/v1`
-
-#### Tags
-
-- AI Query
-- Extraction
-- Scraping
-
-#### Properties
-
-- [Documentation](https://docs.airtop.ai/api-reference/airtop-api/windows/page-query)
-- [API Reference](https://docs.airtop.ai/api-reference/airtop-api/windows/paginated-extraction)
-- [OpenAPI](openapi/airtop-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/airtop.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/airtop.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Airtop Screenshots API
-
-Captures a screenshot of the current state of a window for visual inspection, debugging, or feeding back into a vision-capable agent loop.
-
-- **Human URL:** [https://docs.airtop.ai/api-reference/airtop-api](https://docs.airtop.ai/api-reference/airtop-api)
-- **Base URL:** `https://api.airtop.ai/api/v1`
-
-#### Tags
-
-- Screenshots
-- Visual
-
-#### Properties
-
-- [Documentation](https://docs.airtop.ai/api-reference/airtop-api)
-- [OpenAPI](openapi/airtop-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/airtop.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/airtop.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### Airtop Profiles API
-
-Persists browser state (cookies, local storage, logged-in sessions) into named profiles that can be saved when a session terminates and loaded into future sessions, and deletes profiles when no longer needed.
-
-- **Human URL:** [https://docs.airtop.ai/api-reference/airtop-api](https://docs.airtop.ai/api-reference/airtop-api)
-- **Base URL:** `https://api.airtop.ai/api/v1`
-
-#### Tags
-
-- Profiles
-- Persistence
-- Authentication
-
-#### Properties
-
-- [Documentation](https://docs.airtop.ai/api-reference/airtop-api)
-- [OpenAPI](openapi/airtop-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/airtop.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/airtop.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [GitHub Organization](https://github.com/airtop-ai)
-- [LinkedIn](https://www.linkedin.com/company/airtop-ai)
 - [Website](https://www.airtop.ai)
 - [Documentation](https://docs.airtop.ai)
-- [Plans](plans/airtop-plans-pricing.yml)
-- [Rate Limits](rate-limits/airtop-rate-limits.yml)
-- [Fin Ops](finops/airtop-finops.yml)
+- [Blog](https://www.airtop.ai/blog)
+- [GitHub](https://github.com/airtop-ai)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 27.0** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 49.0 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 7.9 |
+
+**Agent readiness 17.9** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 11.8** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/airtop/](https://apis.io/providers/airtop/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Airtop: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/airtop/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
